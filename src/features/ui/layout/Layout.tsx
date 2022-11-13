@@ -1,5 +1,7 @@
 import Head from "next/head";
 
+import { Header } from "@features/ui";
+
 interface IProps {
   children: JSX.Element;
 }
@@ -15,8 +17,10 @@ export function Layout({ children }: IProps) {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <main className="min-h-screen">{children}</main>
+      <Header />
+      <main className="min-h-[calc(100vh-60px)] md:min-h-[calc(100vh-68px)]">
+        {children}
+      </main>
     </>
   );
 }

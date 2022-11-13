@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes } from "react";
 
 interface IProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: string;
+  children: string | JSX.Element;
   buttonStyle?: string;
   size?: string;
 }

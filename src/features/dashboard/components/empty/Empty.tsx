@@ -7,7 +7,7 @@ interface IProps {
 
 export function Empty({ title, buttonLabel }: IProps) {
   return (
-    <div className="flex h-screen flex-col items-center justify-center">
+    <div className="flex h-[calc(100vh-60px)] flex-col items-center justify-center md:h-[calc(100vh-68px)]">
       <div className="mx-4 flex flex-col items-center">
         <p className="mb-6 text-center text-lg font-bold">{title}</p>
         <Button>{buttonLabel}</Button>
