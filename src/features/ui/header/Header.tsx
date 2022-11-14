@@ -22,6 +22,12 @@ export function Header() {
 
   return (
     <>
+      {isOpen && (
+        <div
+          className="absolute inset-0 bg-overlay"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
       <MobileNav isOpen={isOpen} />
       <header className="relative flex items-center justify-between bg-white py-4 px-4 md:px-8">
         <div className="flex items-center gap-x-4 md:gap-x-14">
