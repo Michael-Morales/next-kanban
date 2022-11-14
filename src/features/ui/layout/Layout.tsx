@@ -18,7 +18,7 @@ export function Layout({ children }: IProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header />
-      <main className="min-h-[calc(100vh-60px)] md:min-h-[calc(100vh-68px)]">
+      <main className="h-[calc(100vh-60px)] overflow-auto md:h-[calc(100vh-68px)]">
         {children}
       </main>
     </>
