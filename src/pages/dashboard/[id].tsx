@@ -1,23 +1,36 @@
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+
 import { Layout } from "@features/ui";
-import { Column, NewColumn } from "@features/dashboard";
+import { Column, NewColumn, Empty } from "@features/dashboard";
 
 import data from "../../data.json";
 
-export default function Board() {
+export default function Board({
+  columns,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <Layout>
-      <div className="flex min-h-full gap-x-6 px-4 py-6 md:px-6">
-        <Column />
-        <Column />
-        <Column />
-        <NewColumn />
-      </div>
+      {!!columns.length ? (
+        <div className="flex min-h-full gap-x-6 px-4 py-6 md:px-6">
+          {columns.map((column) => (
+            <Column key={column.id} column={column} />
+          ))}
+          <NewColumn />
+        </div>
+      ) : (
+        <Empty
+          title="This board is empty. Create a new column to get started."
+          buttonLabel="add new column"
+        />
+      )}
     </Layout>
   );
 }
 
-export async function getServerSideProps() {
-  if (!!!data.length) {
+export async function getServerSideProps({ query }: GetServerSidePropsContext) {
+  const board = data.find(({ id }) => query.id === id);
+
+  if (!board) {
     return {
       redirect: {
         destination: "/dashboard",
@@ -27,6 +40,8 @@ export async function getServerSideProps() {
   }
 
   return {
-    props: {},
+    props: {
+      columns: board.columns,
+    },
   };
 }

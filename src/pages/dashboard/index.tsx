@@ -1,6 +1,8 @@
 import { Empty } from "@features/dashboard";
 import { Layout } from "@features/ui";
 
+import data from "../../data.json";
+
 export default function Dashboard() {
   return (
     <Layout>
@@ -10,4 +12,19 @@ export default function Dashboard() {
       />
     </Layout>
   );
+}
+
+export async function getServerSideProps() {
+  if (!!data.length) {
+    return {
+      redirect: {
+        destination: `/dashboard/${data[0].id}`,
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 }

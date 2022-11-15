@@ -58,7 +58,9 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
   useEffect(() => {
     router.events.on("routeChangeComplete", handleCloseNav);
 
-    return router.events.off("routeChangeComplete", handleCloseNav);
+    return () => {
+      router.events.off("routeChangeComplete", handleCloseNav);
+    };
   }, [router]);
 
   return (
@@ -88,14 +90,14 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
               {currentBoard ? currentBoard.name : "Select a board"}
             </h1>
           </div>
-          <div className="flex items-center gap-x-2">
+          <div className="flex items-center gap-x-2 md:gap-x-4">
             <Button size="small">
               <>
                 <Image className="md:hidden" src={addIcon} alt="" />
                 <span className="hidden md:block">add new task</span>
               </>
             </Button>
-            <button className="px-2" onClick={handleMenuOpen}>
+            <button className="px-2.5" onClick={handleMenuOpen}>
               <Image src={ellipsisIcon} alt="" />
             </button>
           </div>
