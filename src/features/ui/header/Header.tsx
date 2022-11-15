@@ -1,4 +1,10 @@
-import { useState, useImperativeHandle, forwardRef, useRef } from "react";
+import {
+  useState,
+  useImperativeHandle,
+  forwardRef,
+  useRef,
+  useEffect,
+} from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -12,6 +18,8 @@ import addIcon from "@images/icon-add-task-mobile.svg";
 import chevronUpIcon from "@images/icon-chevron-up.svg";
 import chevronDownIcon from "@images/icon-chevron-down.svg";
 
+import data from "../../../data.json";
+
 export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
   _,
   ref
@@ -20,6 +28,8 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
   const [navOpen, setNavOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const headerRef = useRef(null);
+
+  const currentBoard = data.find(({ id }) => id === router.query.id);
 
   const handleOpenNav = () => {
     if (menuOpen) setMenuOpen(false);
@@ -31,6 +41,10 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
     setMenuOpen(!menuOpen);
   };
 
+  const handleCloseNav = () => {
+    setNavOpen(false);
+  };
+
   useImperativeHandle(
     ref,
     () => ({
@@ -40,6 +54,12 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
     }),
     [menuOpen]
   );
+
+  useEffect(() => {
+    router.events.on("routeChangeComplete", handleCloseNav);
+
+    return router.events.off("routeChangeComplete", handleCloseNav);
+  }, [router]);
 
   return (
     <>
@@ -59,13 +79,13 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
               className="flex items-center gap-x-2 md:hidden"
               onClick={handleOpenNav}
             >
-              <h1 className="text-lg font-bold text-black">
-                {router.query.id ? "test" : "Select a board"}
+              <h1 className="text-lg font-bold capitalize text-black">
+                {currentBoard ? currentBoard.name : "Select a board"}
               </h1>
               <Image src={navOpen ? chevronUpIcon : chevronDownIcon} alt="" />
             </button>
-            <h1 className="hidden text-2xl font-bold text-black md:block">
-              {router.query.id ? "test" : "Select a board"}
+            <h1 className="hidden text-2xl font-bold capitalize text-black md:block">
+              {currentBoard ? currentBoard.name : "Select a board"}
             </h1>
           </div>
           <div className="flex items-center gap-x-2">
