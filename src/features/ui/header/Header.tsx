@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-import { Button, MobileNav, Menu } from "@features/ui";
+import { Button, MobileNav, Menu, Overlay } from "@features/ui";
 
 import mobileLogo from "@images/logo-mobile.svg";
 import desktopLogo from "@images/logo-dark.svg";
@@ -43,12 +43,7 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
 
   return (
     <>
-      {navOpen && (
-        <div
-          className="absolute inset-0 bg-overlay"
-          onClick={() => setNavOpen(false)}
-        />
-      )}
+      <Overlay show={navOpen} onDismiss={() => setNavOpen(false)} />
       <MobileNav isOpen={navOpen} />
       <div className="isolate">
         <header

@@ -4,3 +4,4 @@ export * from "./header";
 export * from "./navigation";
 export * from "./icons";
 export * from "./menu";
+export * from "./modal";
