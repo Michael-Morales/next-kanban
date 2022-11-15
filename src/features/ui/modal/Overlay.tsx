@@ -16,17 +16,21 @@ export function Overlay({ show, onDismiss }: IProps) {
       nodeRef={nodeRef}
       timeout={150}
       unmountOnExit
+      appear
       classNames={{
         enter: "opacity-0",
-        enterActive: "opacity-50 transition-opacity",
+        enterActive: "transition-opacity opacity-50",
         enterDone: "opacity-50",
+        appear: "opacity-0",
+        appearActive: "transition-opacity opacity-50",
         exit: "opacity-50",
-        exitActive: "opacity-0 transition-opacity",
+        exitActive: "transition-opacity opacity-50",
+        exitDone: "opacity-0",
       }}
     >
       <div
         ref={nodeRef}
-        className="absolute inset-0 bg-dark"
+        className="fixed inset-0 bg-dark"
         onClick={onDismiss}
       />
     </CSSTransition>
