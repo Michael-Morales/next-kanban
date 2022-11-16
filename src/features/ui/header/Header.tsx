@@ -2,14 +2,14 @@ import {
   useState,
   useImperativeHandle,
   forwardRef,
-  useRef,
   useEffect,
+  useRef,
 } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-import { Button, MobileNav, Menu, Overlay } from "@features/ui";
+import { Button, MobileNav, Menu, IMenuHandle, Overlay } from "@features/ui";
 
 import mobileLogo from "@images/logo-mobile.svg";
 import desktopLogo from "@images/logo-dark.svg";
@@ -26,19 +26,18 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
 ) {
   const router = useRouter();
   const [navOpen, setNavOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const headerRef = useRef(null);
+  const menuRef = useRef<IMenuHandle>(null);
 
   const currentBoard = data.find(({ id }) => id === router.query.id);
 
   const handleOpenNav = () => {
-    if (menuOpen) setMenuOpen(false);
+    if (menuRef.current?.isOpen) menuRef.current?.close();
     setNavOpen(!navOpen);
   };
 
   const handleMenuOpen = () => {
     if (navOpen) setNavOpen(false);
-    setMenuOpen(!menuOpen);
+    menuRef.current?.toggle();
   };
 
   const handleCloseNav = () => {
@@ -49,10 +48,10 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
     ref,
     () => ({
       closeMenu: () => {
-        if (menuOpen) setMenuOpen(false);
+        if (menuRef.current?.isOpen) menuRef.current?.close();
       },
     }),
-    [menuOpen]
+    []
   );
 
   useEffect(() => {
@@ -67,11 +66,8 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
     <>
       <Overlay show={navOpen} onDismiss={() => setNavOpen(false)} />
       <MobileNav isOpen={navOpen} />
-      <div className="isolate">
-        <header
-          ref={headerRef}
-          className="relative flex items-center justify-between bg-white py-4 px-4 md:px-8"
-        >
+      <div className="isolate z-10">
+        <header className="relative flex items-center justify-between bg-white py-4 px-4 md:px-8">
           <div className="flex items-center gap-x-4 md:gap-x-14">
             <Link href="/">
               <Image className="md:hidden" src={mobileLogo} alt="" />
@@ -102,7 +98,7 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
             </button>
           </div>
         </header>
-        <Menu title="board" isOpen={menuOpen} />
+        <Menu ref={menuRef} title="board" />
       </div>
     </>
   );

@@ -30,7 +30,7 @@ export function Overlay({ show, onDismiss }: IProps) {
     >
       <div
         ref={nodeRef}
-        className="fixed inset-0 bg-dark"
+        className="absolute inset-0 z-10 bg-dark"
         onClick={onDismiss}
       />
     </CSSTransition>
