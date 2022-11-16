@@ -97,8 +97,8 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
               <Image src={ellipsisIcon} alt="" />
             </button>
           </div>
+          <Menu ref={menuRef} title="board" />
         </header>
-        <Menu ref={menuRef} title="board" />
       </div>
     </>
   );

@@ -30,7 +30,7 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
 
   return (
     <div
-      className={`absolute top-20 right-4 flex w-48 origin-top flex-col gap-y-4 rounded-lg bg-white p-4 text-sm shadow-lg transition-transform md:right-8 ${
+      className={`absolute top-[calc(100%+8px)] right-2 flex w-48 origin-top flex-col gap-y-4 rounded-lg bg-white p-4 text-sm shadow-lg transition-transform md:right-8 ${
         isOpen ? "scale-y-1" : "scale-y-0"
       }`}
       onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}

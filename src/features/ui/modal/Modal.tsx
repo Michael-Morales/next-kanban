@@ -60,44 +60,46 @@ export const Modal = forwardRef<IModalHandle, IProps>(function Modal(
   );
 
   const ModalContent = modalOpen ? (
-    <CSSTransition
-      key="modal"
-      in={modalOpen}
-      nodeRef={modalRef}
-      timeout={150}
-      appear
-      unmountOnExit
-      classNames={{
-        enter: "opacity-0",
-        enterActive: "transition-opacity opacity-100",
-        enterDone: "opacity-100",
-        appear: "opacity-0",
-        appearActive: "transition-opacity opacity-100",
-        exit: "opacity-100",
-        exitActive: "transition-opacity opacity-100",
-        exitDone: "opacity-0",
-      }}
-    >
-      <>
-        <Overlay show={modalOpen} onDismiss={() => setModalOpen(false)} />
+    <>
+      <Overlay show={modalOpen} onDismiss={() => setModalOpen(false)} />
+      <CSSTransition
+        key="modal"
+        in={modalOpen}
+        nodeRef={modalRef}
+        timeout={150}
+        appear
+        unmountOnExit
+        classNames={{
+          enter: "opacity-0",
+          enterActive: "transition-opacity opacity-100",
+          enterDone: "opacity-100",
+          appear: "opacity-0",
+          appearActive: "transition-opacity opacity-100",
+          exit: "opacity-100",
+          exitActive: "transition-opacity opacity-100",
+          exitDone: "opacity-0",
+        }}
+      >
         <div
-          className="absolute top-1/2 left-1/2 z-10 flex w-full max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col gap-y-6 rounded-lg bg-white p-6 md:p-8"
+          className="absolute top-1/2 left-1/2 z-20 flex w-11/12 max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col gap-y-6 rounded-lg bg-white p-6 md:p-8"
           onClick={handleMenuClose}
           ref={modalRef}
         >
           <div className="relative flex items-center justify-between gap-x-6">
             <h3 className="flex-1 text-lg font-bold text-black">{title}</h3>
             {task && (
-              <button className="px-2.5" onClick={handleMenu}>
-                <Image src={ellipsisIcon} alt="" />
-              </button>
+              <>
+                <button className="px-2.5" onClick={handleMenu}>
+                  <Image src={ellipsisIcon} alt="" />
+                </button>
+                <Menu ref={menuRef} title="task" />
+              </>
             )}
           </div>
           {children}
-          {task && <Menu ref={menuRef} title="task" />}
         </div>
-      </>
-    </CSSTransition>
+      </CSSTransition>
+    </>
   ) : null;
 
   if (isBrowser) {

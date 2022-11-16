@@ -5,3 +5,4 @@ export * from "./navigation";
 export * from "./icons";
 export * from "./menu";
 export * from "./modal";
+export * from "./checkbox";
