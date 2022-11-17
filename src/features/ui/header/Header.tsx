@@ -9,12 +9,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-import { Button, MobileNav, Menu, IMenuHandle, Overlay } from "@features/ui";
+import { MobileNav, Menu, IMenuHandle, Overlay } from "@features/ui";
 
 import mobileLogo from "@images/logo-mobile.svg";
 import desktopLogo from "@images/logo-dark.svg";
 import ellipsisIcon from "@images/icon-vertical-ellipsis.svg";
-import addIcon from "@images/icon-add-task-mobile.svg";
 import chevronUpIcon from "@images/icon-chevron-up.svg";
 import chevronDownIcon from "@images/icon-chevron-down.svg";
 
@@ -85,17 +84,9 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
             {currentBoard ? currentBoard.name : "Select a board"}
           </h1>
         </div>
-        <div className="flex items-center gap-x-2 md:gap-x-4">
-          <Button size="small">
-            <>
-              <Image className="md:hidden" src={addIcon} alt="" />
-              <span className="hidden md:block">add new task</span>
-            </>
-          </Button>
-          <button className="px-2.5" onClick={handleMenuOpen}>
-            <Image src={ellipsisIcon} alt="" />
-          </button>
-        </div>
+        <button className="px-2.5" onClick={handleMenuOpen}>
+          <Image src={ellipsisIcon} alt="" />
+        </button>
         <Menu ref={menuRef} title="board" />
       </header>
     </>

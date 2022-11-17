@@ -1,13 +1,12 @@
 import { Card } from "../card";
-
-import { IColumn } from "@features/dashboard";
+import { IColumn, NewTask } from "@features/dashboard";
 
 interface IProps {
   column: IColumn;
 }
 
 export function Column({ column }: IProps) {
-  const { name, tasks } = column;
+  const { id, name, tasks } = column;
 
   return (
     <div className="shrink-0 grow-0 basis-72">
@@ -18,6 +17,7 @@ export function Column({ column }: IProps) {
         {tasks.map((task) => (
           <Card key={task.id} task={task} />
         ))}
+        <NewTask columnId={id} />
       </div>
     </div>
   );
