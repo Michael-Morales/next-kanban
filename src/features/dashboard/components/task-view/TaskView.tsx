@@ -24,6 +24,10 @@ export function TaskView({
     defaultValues: { subtasks: completedSubtasks },
   });
 
+  const sortedSubtasks = [...subtasks].sort(
+    (a, b) => +b.isCompleted - +a.isCompleted
+  );
+
   const onSubmit: SubmitHandler<FormValues> = (val) => {
     console.log(val.subtasks);
     onClose();
@@ -38,7 +42,7 @@ export function TaskView({
             Subtasks ({completedSubtasks.length} of {subtasks.length})
           </h4>
           <div className="flex flex-col gap-y-2">
-            {subtasks.map(({ id, title }) => (
+            {sortedSubtasks.map(({ id, title }) => (
               <Checkbox
                 key={id}
                 label={title}
@@ -50,9 +54,6 @@ export function TaskView({
         </div>
         <div className="flex flex-col gap-y-4">
           <Button type="submit">confirm</Button>
-          <Button buttonStyle="secondary" onClick={onClose}>
-            cancel
-          </Button>
         </div>
       </form>
     </>

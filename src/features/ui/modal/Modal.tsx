@@ -81,7 +81,7 @@ export const Modal = forwardRef<IModalHandle, IProps>(function Modal(
         }}
       >
         <div
-          className="absolute top-1/2 left-1/2 z-20 flex w-11/12 max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col gap-y-6 rounded-lg bg-white p-6 md:p-8"
+          className="absolute top-1/2 left-1/2 z-20 flex max-h-[90%] w-11/12 max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col gap-y-6 rounded-lg bg-white p-6 md:p-8"
           onClick={handleMenuClose}
           ref={modalRef}
         >

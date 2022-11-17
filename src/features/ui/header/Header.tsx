@@ -66,40 +66,38 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
     <>
       <Overlay show={navOpen} onDismiss={() => setNavOpen(false)} />
       <MobileNav isOpen={navOpen} />
-      <div className="isolate z-10">
-        <header className="relative flex items-center justify-between bg-white py-4 px-4 md:px-8">
-          <div className="flex items-center gap-x-4 md:gap-x-14">
-            <Link href="/">
-              <Image className="md:hidden" src={mobileLogo} alt="" />
-              <Image className="hidden md:block" src={desktopLogo} alt="" />
-            </Link>
-            <button
-              className="flex items-center gap-x-2 md:hidden"
-              onClick={handleOpenNav}
-            >
-              <h1 className="text-lg font-bold capitalize text-black">
-                {currentBoard ? currentBoard.name : "Select a board"}
-              </h1>
-              <Image src={navOpen ? chevronUpIcon : chevronDownIcon} alt="" />
-            </button>
-            <h1 className="hidden text-2xl font-bold capitalize text-black md:block">
+      <header className="relative z-20 flex items-center justify-between bg-white py-4 px-4 md:px-8">
+        <div className="flex items-center gap-x-4 md:gap-x-14">
+          <Link href="/">
+            <Image className="md:hidden" src={mobileLogo} alt="" />
+            <Image className="hidden md:block" src={desktopLogo} alt="" />
+          </Link>
+          <button
+            className="flex items-center gap-x-2 md:hidden"
+            onClick={handleOpenNav}
+          >
+            <h1 className="text-lg font-bold capitalize text-black">
               {currentBoard ? currentBoard.name : "Select a board"}
             </h1>
-          </div>
-          <div className="flex items-center gap-x-2 md:gap-x-4">
-            <Button size="small">
-              <>
-                <Image className="md:hidden" src={addIcon} alt="" />
-                <span className="hidden md:block">add new task</span>
-              </>
-            </Button>
-            <button className="px-2.5" onClick={handleMenuOpen}>
-              <Image src={ellipsisIcon} alt="" />
-            </button>
-          </div>
-          <Menu ref={menuRef} title="board" />
-        </header>
-      </div>
+            <Image src={navOpen ? chevronUpIcon : chevronDownIcon} alt="" />
+          </button>
+          <h1 className="hidden text-2xl font-bold capitalize text-black md:block">
+            {currentBoard ? currentBoard.name : "Select a board"}
+          </h1>
+        </div>
+        <div className="flex items-center gap-x-2 md:gap-x-4">
+          <Button size="small">
+            <>
+              <Image className="md:hidden" src={addIcon} alt="" />
+              <span className="hidden md:block">add new task</span>
+            </>
+          </Button>
+          <button className="px-2.5" onClick={handleMenuOpen}>
+            <Image src={ellipsisIcon} alt="" />
+          </button>
+        </div>
+        <Menu ref={menuRef} title="board" />
+      </header>
     </>
   );
 });
