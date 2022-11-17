@@ -10,7 +10,7 @@ interface IProps {
 export function DesktopNav({ isOpen, onClose }: IProps) {
   return (
     <div
-      className={`fixed z-20 hidden h-[calc(100vh-68px)] w-72 border-t border-secondary bg-white p-8 transition-transform md:flex md:flex-col md:justify-between ${
+      className={`fixed z-20 hidden h-[calc(100vh-68px)] w-72 overflow-y-auto border-t border-secondary bg-white p-8 transition-transform md:flex md:flex-col md:justify-between ${
         isOpen ? "translate-x-0" : "-translate-x-72"
       }`}
     >

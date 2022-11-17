@@ -1,6 +1,6 @@
-import { useForm, SubmitHandler } from "react-hook-form";
+import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 
-import { Input, Button } from "@features/ui";
+import { Input, Button, DeletableInput } from "@features/ui";
 
 interface IProps {
   onClose: () => void;
@@ -11,6 +11,7 @@ interface FormValues {
   title: string;
   description: string;
   columnId: string;
+  subtasks: { title: string }[];
 }
 
 export function CreateTask({ onClose, columnId }: IProps) {
@@ -18,8 +19,18 @@ export function CreateTask({ onClose, columnId }: IProps) {
     register,
     handleSubmit,
     formState: { errors, isDirty },
+    control,
   } = useForm<FormValues>({
-    defaultValues: { title: "", description: "", columnId },
+    defaultValues: {
+      title: "",
+      description: "",
+      columnId,
+      subtasks: [{ title: "" }],
+    },
+  });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "subtasks",
   });
 
   const onSubmit: SubmitHandler<FormValues> = (val) => {
@@ -28,7 +39,7 @@ export function CreateTask({ onClose, columnId }: IProps) {
   };
 
   const checkErrors = () => {
-    return !isDirty || !!errors.title;
+    return !isDirty || !!errors.title || !!errors.subtasks;
   };
 
   return (
@@ -44,6 +55,23 @@ export function CreateTask({ onClose, columnId }: IProps) {
         type="textarea"
         placeholder="e.g. The header goes to the background when clicking on the navigation button."
       />
+      <fieldset>
+        <legend className="mb-2 text-xs font-bold capitalize">subtasks</legend>
+        <div className="flex flex-col gap-y-3">
+          {fields.map((field, i) => (
+            <DeletableInput
+              key={field.id}
+              register={register(`subtasks.${i}.title` as const, {
+                required: true,
+              })}
+              remove={() => remove(i)}
+            />
+          ))}
+          <Button buttonStyle="secondary" onClick={() => append({ title: "" })}>
+            add new subtask
+          </Button>
+        </div>
+      </fieldset>
       <Button type="submit" disabled={checkErrors()}>
         create task
       </Button>

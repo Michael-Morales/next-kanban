@@ -8,7 +8,7 @@ interface IProps {
 
 export function Checkbox({ label, register, value }: IProps) {
   return (
-    <label className="flex cursor-pointer items-center gap-x-4 rounded bg-light-blue p-3">
+    <label className="flex cursor-pointer items-center gap-x-4 rounded bg-light-blue p-3 hover:bg-hover-primary">
       <input
         type="checkbox"
         className="peer rounded-sm border-body text-primary"
