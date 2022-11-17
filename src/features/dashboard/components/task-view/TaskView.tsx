@@ -20,7 +20,7 @@ export function TaskView({
   completedSubtasks,
   onClose,
 }: IProps) {
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit } = useForm<FormValues>({
     defaultValues: { subtasks: completedSubtasks },
   });
 
@@ -38,7 +38,7 @@ export function TaskView({
       {description && <p className="text-sm">{description}</p>}
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-6">
-          <h4 className="mb-4 text-sm font-bold">
+          <h4 className="mb-4 text-xs font-bold">
             Subtasks ({completedSubtasks.length} of {subtasks.length})
           </h4>
           <div className="flex flex-col gap-y-2">

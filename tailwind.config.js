@@ -23,6 +23,7 @@ module.exports = {
       "light-blue": "#e9effa",
       placeholder: "rgba(0, 1, 18, 0.25)",
       overlay: "rgba(32, 33, 44, 0.5)",
+      transparent: "transparent",
     },
     extend: {
       fontFamily: {
