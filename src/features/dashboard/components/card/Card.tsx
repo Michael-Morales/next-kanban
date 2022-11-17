@@ -27,7 +27,7 @@ export function Card({ task }: IProps) {
           {completedSubtasks.length} of {subtasks.length} subtasks
         </p>
       </div>
-      <Modal ref={modalRef} title={title} task>
+      <Modal ref={modalRef} title={title} task={task}>
         <TaskView
           description={description}
           subtasks={subtasks}

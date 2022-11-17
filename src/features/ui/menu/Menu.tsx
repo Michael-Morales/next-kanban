@@ -1,7 +1,18 @@
-import { useState, forwardRef, useImperativeHandle, MouseEvent } from "react";
+import {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  MouseEvent,
+  useRef,
+} from "react";
+
+import { Modal, IModalHandle } from "@features/ui";
+import { ITask, EditTask, IBoard } from "@features/dashboard";
 
 interface IProps {
   title: string;
+  item: ITask | IBoard;
+  closeRootModal?: () => void;
 }
 
 export interface IMenuHandle {
@@ -12,10 +23,12 @@ export interface IMenuHandle {
 }
 
 export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
-  { title },
+  { title, item, closeRootModal },
   ref
 ) {
   const [isOpen, setIsOpen] = useState(false);
+  const editModalRef = useRef<IModalHandle>(null);
+  const deleteModalRef = useRef<IModalHandle>(null);
 
   useImperativeHandle(
     ref,
@@ -29,16 +42,36 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
   );
 
   return (
-    <div
-      className={`absolute top-[calc(100%+8px)] right-2 flex w-48 origin-top flex-col gap-y-4 rounded-lg bg-white p-4 text-sm shadow-lg transition-transform md:right-8 ${
-        isOpen ? "scale-y-1" : "scale-y-0"
-      }`}
-      onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
-    >
-      <button className="text-left font-bold capitalize">edit {title}</button>
-      <button className="text-left font-bold capitalize text-danger">
-        delete {title}
-      </button>
-    </div>
+    <>
+      <div
+        className={`absolute top-[calc(100%+8px)] right-2 flex w-48 origin-top flex-col gap-y-4 rounded-lg bg-white p-4 text-sm shadow-lg transition-transform md:right-8 ${
+          isOpen ? "scale-y-1" : "scale-y-0"
+        }`}
+        onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+      >
+        <button
+          className="text-left font-bold capitalize"
+          onClick={() => editModalRef.current?.open()}
+        >
+          edit {title}
+        </button>
+        <button
+          className="text-left font-bold capitalize text-danger"
+          onClick={() => deleteModalRef.current?.open()}
+        >
+          delete {title}
+        </button>
+      </div>
+      <Modal ref={editModalRef} title={`Edit ${title}`}>
+        {title === "task" ? (
+          <EditTask onClose={closeRootModal} task={item as ITask} />
+        ) : (
+          <div></div>
+        )}
+      </Modal>
+      {/* <Modal ref={deleteModalRef} title="Delete task">
+  
+        </Modal> */}
+    </>
   );
 });

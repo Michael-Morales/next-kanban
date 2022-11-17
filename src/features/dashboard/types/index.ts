@@ -1,3 +1,9 @@
+export interface IBoard {
+  id: string;
+  name: string;
+  columns: IColumn[];
+}
+
 export interface IColumn {
   id: string;
   name: string;

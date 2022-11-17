@@ -12,13 +12,14 @@ import { CSSTransition } from "react-transition-group";
 
 import { Overlay } from "./Overlay";
 import { Menu, IMenuHandle } from "@features/ui";
+import { ITask } from "@features/dashboard";
 
 import ellipsisIcon from "@images/icon-vertical-ellipsis.svg";
 
 interface IProps {
   children: JSX.Element;
   title: string;
-  task?: boolean;
+  task?: ITask;
 }
 
 export interface IModalHandle {
@@ -92,7 +93,12 @@ export const Modal = forwardRef<IModalHandle, IProps>(function Modal(
                 <button className="px-2.5" onClick={handleMenu}>
                   <Image src={ellipsisIcon} alt="" />
                 </button>
-                <Menu ref={menuRef} title="task" />
+                <Menu
+                  ref={menuRef}
+                  title="task"
+                  item={task}
+                  closeRootModal={() => setModalOpen(false)}
+                />
               </>
             )}
           </div>
