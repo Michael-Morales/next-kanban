@@ -7,7 +7,7 @@ import {
 } from "react";
 
 import { Modal, IModalHandle, DeleteModal } from "@features/ui";
-import { ITask, EditTask, IBoard } from "@features/dashboard";
+import { ITask, EditTask, IBoard, EditBoard } from "@features/dashboard";
 
 interface IProps {
   task?: ITask;
@@ -74,9 +74,9 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
       </div>
       <Modal ref={editModalRef} title={`Edit ${title}`}>
         {task ? (
-          <EditTask onClose={closeRootModal} task={task!} />
+          <EditTask onClose={closeRootModal!} task={task!} />
         ) : (
-          <div></div>
+          <EditBoard onClose={closeRootModal!} board={board!} />
         )}
       </Modal>
       <Modal ref={deleteModalRef} title={`Delete this ${title}`} type="delete">

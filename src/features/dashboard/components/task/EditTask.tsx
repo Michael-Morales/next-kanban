@@ -4,7 +4,7 @@ import { Input, Button, DeletableInput } from "@features/ui";
 import { ITask } from "@features/dashboard";
 
 interface IProps {
-  onClose?: () => void;
+  onClose: () => void;
   task: ITask;
 }
 
@@ -12,7 +12,7 @@ interface FormValues {
   id: string;
   title: string;
   description: string;
-  subtasks: { id: string; title: string }[];
+  subtasks: { id?: string; title: string }[];
 }
 
 export function EditTask({ onClose, task }: IProps) {
@@ -73,10 +73,7 @@ export function EditTask({ onClose, task }: IProps) {
               placeholder="e.g. Change header CSS rules"
             />
           ))}
-          <Button
-            buttonStyle="secondary"
-            onClick={() => append({ id: "1", title: "" })}
-          >
+          <Button buttonStyle="secondary" onClick={() => append({ title: "" })}>
             add new subtask
           </Button>
         </div>

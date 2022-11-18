@@ -1,24 +1,27 @@
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 
 import { Input, DeletableInput, Button } from "@features/ui";
+import { IBoard } from "@features/dashboard";
 
 interface IProps {
   onClose: () => void;
+  board: IBoard;
 }
 
 interface FormValues {
   name: string;
-  columns: { name: string }[];
+  columns: { id?: string; name: string }[];
 }
 
-export function CreateBoard({ onClose }: IProps) {
+export function EditBoard({ onClose, board }: IProps) {
+  const mappedColumns = board.columns.map(({ id, name }) => ({ id, name }));
   const {
     register,
     handleSubmit,
     control,
     formState: { errors, isDirty },
   } = useForm<FormValues>({
-    defaultValues: { name: "", columns: [{ name: "" }] },
+    defaultValues: { name: board.name, columns: mappedColumns },
   });
   const { fields, append, remove } = useFieldArray({
     control,
@@ -62,7 +65,7 @@ export function CreateBoard({ onClose }: IProps) {
         </div>
       </fieldset>
       <Button type="submit" disabled={checkErrors()}>
-        create new board
+        save changes
       </Button>
     </form>
   );
