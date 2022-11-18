@@ -22,12 +22,14 @@ export function Button({
   disabled,
   buttonStyle = "primary",
   size = "standard",
+  onClick,
 }: IProps) {
   return (
     <button
-      className={`rounded-full font-bold capitalize transition-colors disabled:bg-secondary disabled:text-white ${styles[buttonStyle]} ${styles[size]}`}
+      className={`flex-1 rounded-full font-bold capitalize transition-colors disabled:bg-secondary disabled:text-white ${styles[buttonStyle]} ${styles[size]}`}
       type={type}
       disabled={disabled}
+      onClick={onClick}
     >
       {children}
     </button>
