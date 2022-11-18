@@ -95,8 +95,7 @@ export const Modal = forwardRef<IModalHandle, IProps>(function Modal(
                 </button>
                 <Menu
                   ref={menuRef}
-                  title="task"
-                  item={task}
+                  task={task}
                   closeRootModal={() => setModalOpen(false)}
                 />
               </>

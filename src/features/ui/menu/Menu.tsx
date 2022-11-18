@@ -6,12 +6,12 @@ import {
   useRef,
 } from "react";
 
-import { Modal, IModalHandle } from "@features/ui";
+import { Modal, IModalHandle, DeleteModal } from "@features/ui";
 import { ITask, EditTask, IBoard } from "@features/dashboard";
 
 interface IProps {
-  title: string;
-  item: ITask | IBoard;
+  task?: ITask;
+  board?: IBoard;
   closeRootModal?: () => void;
 }
 
@@ -23,12 +23,22 @@ export interface IMenuHandle {
 }
 
 export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
-  { title, item, closeRootModal },
+  { task, board, closeRootModal },
   ref
 ) {
   const [isOpen, setIsOpen] = useState(false);
   const editModalRef = useRef<IModalHandle>(null);
   const deleteModalRef = useRef<IModalHandle>(null);
+
+  const title = task ? "task" : "board";
+
+  const handleDelete = () => {
+    if (task) {
+      console.log("delete task");
+    } else if (board) {
+      console.log("delete board");
+    }
+  };
 
   useImperativeHandle(
     ref,
@@ -63,15 +73,29 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
         </button>
       </div>
       <Modal ref={editModalRef} title={`Edit ${title}`}>
-        {title === "task" ? (
-          <EditTask onClose={closeRootModal} task={item as ITask} />
+        {task ? (
+          <EditTask onClose={closeRootModal} task={task!} />
         ) : (
           <div></div>
         )}
       </Modal>
-      {/* <Modal ref={deleteModalRef} title="Delete task">
-  
-        </Modal> */}
+      <Modal ref={deleteModalRef} title={`Delete this ${title}`}>
+        {task ? (
+          <DeleteModal
+            content={`Are you sure you want to delete the ‘${task?.title}’ task and its subtasks? This action cannot be reversed.`}
+            onDelete={handleDelete}
+            onCancel={() => deleteModalRef.current?.close()}
+            onClose={closeRootModal!}
+          />
+        ) : (
+          <DeleteModal
+            content={`Are you sure you want to delete the ‘${board?.name}’ board? This action will remove all columns and tasks and cannot be reversed.`}
+            onDelete={handleDelete}
+            onCancel={() => deleteModalRef.current?.close()}
+            onClose={() => deleteModalRef.current?.close()}
+          />
+        )}
+      </Modal>
     </>
   );
 });

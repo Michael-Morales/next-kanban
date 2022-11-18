@@ -87,7 +87,7 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
         <button className="px-2.5" onClick={handleMenuOpen}>
           <Image src={ellipsisIcon} alt="" />
         </button>
-        <Menu ref={menuRef} title="board" />
+        <Menu ref={menuRef} board={currentBoard} />
       </header>
     </>
   );
