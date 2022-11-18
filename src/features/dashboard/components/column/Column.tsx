@@ -1,8 +1,8 @@
 import { Card } from "../card";
-import { IColumn, NewTask } from "@features/dashboard";
+import { IColumn, NewTask, ITask, ISubtask } from "@features/dashboard";
 
 interface IProps {
-  column: IColumn;
+  column: IColumn & { tasks: (ITask & { subtasks: ISubtask[] })[] };
 }
 
 export function Column({ column }: IProps) {

@@ -1,7 +1,6 @@
 import { Empty } from "@features/dashboard";
 import { Layout } from "@features/ui";
-
-import data from "../../data.json";
+import prisma from "@lib/prismadb";
 
 export default function Dashboard() {
   return (
@@ -15,10 +14,12 @@ export default function Dashboard() {
 }
 
 export async function getServerSideProps() {
-  if (!!data.length) {
+  const boards = await prisma.board.findMany();
+
+  if (!!boards.length) {
     return {
       redirect: {
-        destination: `/dashboard/${data[0].id}`,
+        destination: `/dashboard/${boards[0].id}`,
         permanent: false,
       },
     };

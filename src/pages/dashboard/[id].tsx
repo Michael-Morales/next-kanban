@@ -2,16 +2,16 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 
 import { Layout } from "@features/ui";
 import { Column, NewColumn } from "@features/dashboard";
-
-import data from "../../data.json";
+import prisma from "@lib/prismadb";
 
 export default function Board({
-  columns,
+  board,
+  boards,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <Layout>
+    <Layout board={board} boards={boards}>
       <div className="flex min-h-full gap-x-6 px-4 py-6 md:px-6">
-        {columns.map((column) => (
+        {board.columns.map((column) => (
           <Column key={column.id} column={column} />
         ))}
         <NewColumn />
@@ -20,8 +20,26 @@ export default function Board({
   );
 }
 
-export async function getServerSideProps({ query }: GetServerSidePropsContext) {
-  const board = data.find(({ id }) => query.id === id);
+export async function getServerSideProps({
+  params,
+}: GetServerSidePropsContext) {
+  const boards = await prisma.board.findMany();
+  const board = await prisma.board.findUnique({
+    where: {
+      id: params?.id as string | undefined,
+    },
+    include: {
+      columns: {
+        include: {
+          tasks: {
+            include: {
+              subtasks: true,
+            },
+          },
+        },
+      },
+    },
+  });
 
   if (!board) {
     return {
@@ -34,7 +52,8 @@ export async function getServerSideProps({ query }: GetServerSidePropsContext) {
 
   return {
     props: {
-      columns: board.columns,
+      board,
+      boards,
     },
   };
 }

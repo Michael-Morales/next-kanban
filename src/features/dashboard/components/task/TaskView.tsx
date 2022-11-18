@@ -4,7 +4,7 @@ import { ISubtask } from "@features/dashboard";
 import { Checkbox, Button } from "@features/ui";
 
 interface IProps {
-  description?: string;
+  description: string | null;
   subtasks: ISubtask[];
   completedSubtasks: string[];
   onClose: () => void;
@@ -37,21 +37,23 @@ export function TaskView({
     <>
       {description && <p className="text-sm">{description}</p>}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="mb-6">
-          <h4 className="mb-4 text-xs font-bold">
-            Subtasks ({completedSubtasks.length} of {subtasks.length})
-          </h4>
-          <div className="flex flex-col gap-y-2">
-            {sortedSubtasks.map(({ id, title }) => (
-              <Checkbox
-                key={id}
-                label={title}
-                value={id}
-                register={register("subtasks")}
-              />
-            ))}
+        {!!subtasks.length && (
+          <div className="mb-6">
+            <h4 className="mb-4 text-xs font-bold">
+              Subtasks ({completedSubtasks.length} of {subtasks.length})
+            </h4>
+            <div className="flex flex-col gap-y-2">
+              {sortedSubtasks.map(({ id, title }) => (
+                <Checkbox
+                  key={id}
+                  label={title}
+                  value={id}
+                  register={register("subtasks")}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
         <div className="flex flex-col gap-y-4">
           <Button type="submit">confirm</Button>
         </div>

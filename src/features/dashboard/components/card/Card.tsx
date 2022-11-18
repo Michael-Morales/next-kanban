@@ -1,10 +1,10 @@
 import { useRef } from "react";
 
-import { ITask, TaskView } from "@features/dashboard";
+import { ITask, ISubtask, TaskView } from "@features/dashboard";
 import { Modal, IModalHandle } from "@features/ui";
 
 interface IProps {
-  task: ITask;
+  task: ITask & { subtasks: ISubtask[] };
 }
 
 export function Card({ task }: IProps) {
