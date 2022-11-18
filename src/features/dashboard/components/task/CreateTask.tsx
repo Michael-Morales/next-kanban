@@ -65,6 +65,7 @@ export function CreateTask({ onClose, columnId }: IProps) {
                 required: true,
               })}
               remove={() => remove(i)}
+              placeholder="e.g. Changer header CSS rules"
             />
           ))}
           <Button buttonStyle="secondary" onClick={() => append({ title: "" })}>

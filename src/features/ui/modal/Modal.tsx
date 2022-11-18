@@ -20,6 +20,7 @@ interface IProps {
   children: JSX.Element;
   title: string;
   task?: ITask;
+  type?: "delete";
 }
 
 export interface IModalHandle {
@@ -28,7 +29,7 @@ export interface IModalHandle {
 }
 
 export const Modal = forwardRef<IModalHandle, IProps>(function Modal(
-  { children, title, task },
+  { children, title, task, type },
   ref
 ) {
   const [isBrowser, setIsBrowser] = useState(false);
@@ -87,7 +88,13 @@ export const Modal = forwardRef<IModalHandle, IProps>(function Modal(
           ref={modalRef}
         >
           <div className="relative flex items-center justify-between gap-x-6">
-            <h3 className="flex-1 text-lg font-bold text-black">{title}</h3>
+            <h3
+              className={`flex-1 text-lg font-bold ${
+                type ? "text-danger" : "text-black"
+              }`}
+            >
+              {title}
+            </h3>
             {task && (
               <>
                 <button className="px-2.5" onClick={handleMenu}>

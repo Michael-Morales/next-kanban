@@ -79,7 +79,7 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
           <div></div>
         )}
       </Modal>
-      <Modal ref={deleteModalRef} title={`Delete this ${title}`}>
+      <Modal ref={deleteModalRef} title={`Delete this ${title}`} type="delete">
         {task ? (
           <DeleteModal
             content={`Are you sure you want to delete the ‘${task?.title}’ task and its subtasks? This action cannot be reversed.`}

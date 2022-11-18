@@ -70,6 +70,7 @@ export function EditTask({ onClose, task }: IProps) {
                 required: true,
               })}
               remove={() => remove(i)}
+              placeholder="e.g. Change header CSS rules"
             />
           ))}
           <Button
