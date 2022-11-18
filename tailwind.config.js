@@ -27,7 +27,10 @@ module.exports = {
     },
     extend: {
       fontFamily: {
-        sans: ["Plus Jakarta Sans", ...defaultTheme.fontFamily.sans],
+        sans: [
+          "var(--font-plus-jakarta-sans)",
+          ...defaultTheme.fontFamily.sans,
+        ],
       },
     },
   },
