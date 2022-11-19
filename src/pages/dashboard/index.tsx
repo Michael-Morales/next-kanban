@@ -2,7 +2,7 @@ import type { InferGetServerSidePropsType } from "next";
 
 import { Empty } from "@features/dashboard";
 import { Layout } from "@features/ui";
-import prisma from "@lib/prismadb";
+import { getBoards } from "@api/boards";
 
 export default function Dashboard({
   boards,
@@ -18,7 +18,7 @@ export default function Dashboard({
 }
 
 export async function getServerSideProps() {
-  const boards = await prisma.board.findMany();
+  const boards = await getBoards();
 
   if (!!boards.length) {
     return {

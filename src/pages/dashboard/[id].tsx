@@ -5,7 +5,8 @@ import type {
 
 import { Layout } from "@features/ui";
 import { Column, NewColumn } from "@features/dashboard";
-import prisma from "@lib/prismadb";
+import { getBoards } from "@api/boards";
+import { getBoardById } from "@api/boards/[id]";
 
 export default function Board({
   board,
@@ -26,23 +27,8 @@ export default function Board({
 export async function getServerSideProps({
   params,
 }: GetServerSidePropsContext) {
-  const boards = await prisma.board.findMany();
-  const board = await prisma.board.findUnique({
-    where: {
-      id: params?.id as string | undefined,
-    },
-    include: {
-      columns: {
-        include: {
-          tasks: {
-            include: {
-              subtasks: true,
-            },
-          },
-        },
-      },
-    },
-  });
+  const boards = await getBoards();
+  const board = await getBoardById(params?.id as string);
 
   if (!board) {
     return {

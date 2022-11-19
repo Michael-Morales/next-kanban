@@ -1,32 +1,43 @@
+import { useRouter } from "next/router";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input, DeletableInput, Button } from "@features/ui";
+import { createBoardSchema, ICreateBoard } from "@lib/validation/dashboard";
 
 interface IProps {
   onClose: () => void;
 }
 
-interface FormValues {
-  name: string;
-  columns: { name: string }[];
-}
-
 export function CreateBoard({ onClose }: IProps) {
+  const router = useRouter();
+  const boardId = router.query.id;
   const {
     register,
     handleSubmit,
     control,
     formState: { errors, isDirty },
-  } = useForm<FormValues>({
-    defaultValues: { name: "", columns: [{ name: "" }] },
+  } = useForm<ICreateBoard>({
+    defaultValues: {
+      name: "",
+      columns: [{ name: "", boardId: boardId as string }],
+    },
+    resolver: zodResolver(createBoardSchema),
   });
   const { fields, append, remove } = useFieldArray({
     control,
     name: "columns",
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (val) => {
-    console.log(val);
+  const onSubmit: SubmitHandler<ICreateBoard> = async (values) => {
+    const parsedValues = createBoardSchema.parse(values);
+    await fetch("/api/boards", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(parsedValues),
+    });
     onClose();
   };
 
@@ -51,12 +62,16 @@ export function CreateBoard({ onClose }: IProps) {
               key={field.id}
               register={register(`columns.${i}.name` as const, {
                 required: true,
+                minLength: 3,
               })}
               remove={() => remove(i)}
               placeholder="e.g. TODO"
             />
           ))}
-          <Button buttonStyle="secondary" onClick={() => append({ name: "" })}>
+          <Button
+            buttonStyle="secondary"
+            onClick={() => append({ name: "", boardId: boardId as string })}
+          >
             add new column
           </Button>
         </div>
