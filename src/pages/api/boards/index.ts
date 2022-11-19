@@ -4,8 +4,7 @@ import prisma from "@lib/prismadb";
 import { createBoardSchema } from "@lib/validation";
 
 export async function getBoards() {
-  const res = await prisma.board.findMany();
-  return res;
+  return await prisma.board.findMany();
 }
 
 export async function createBoard(name: string, columns: { name: string }[]) {
@@ -26,14 +25,13 @@ export default async function handler(
   try {
     switch (req.method) {
       case "GET":
-        return await getBoards();
+        const boards = await getBoards();
+        return res.status(200).json(boards);
 
       case "POST":
         const { name, columns } = createBoardSchema.parse(req.body);
-        const board = await createBoard(name, columns);
-        return res
-          .status(201)
-          .json({ message: "Board created.", boardId: board.id });
+        const { id } = await createBoard(name, columns);
+        return res.status(201).json({ message: "Board created.", boardId: id });
 
       default:
         return res
@@ -41,7 +39,6 @@ export default async function handler(
           .json({ message: `HTTP method ${req.method} is not supported.` });
     }
   } catch (err: any) {
-    console.log(err);
     return res.status(500).json({ message: "Something went wrong." });
   }
 }

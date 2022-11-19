@@ -6,9 +6,11 @@ import {
   MouseEvent,
   useRef,
 } from "react";
+import { useRouter } from "next/router";
 
 import { Modal, IModalHandle, DeleteModal } from "@features/ui";
 import { EditTask, EditBoard } from "@features/dashboard";
+import axios from "@lib/axios";
 
 interface IProps {
   task?: Task & { subtasks: Subtask[] };
@@ -30,15 +32,19 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
   const [isOpen, setIsOpen] = useState(false);
   const editModalRef = useRef<IModalHandle>(null);
   const deleteModalRef = useRef<IModalHandle>(null);
+  const router = useRouter();
 
   const title = task ? "task" : "board";
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (task) {
       console.log("delete task");
     } else if (board) {
-      console.log("delete board");
+      await axios.delete(`/boards/${board.id}`);
+      deleteModalRef.current?.close();
+      router.push("/dashboard");
     }
+    setIsOpen(false);
   };
 
   useImperativeHandle(
@@ -85,14 +91,12 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
           <DeleteModal
             content={`Are you sure you want to delete the ‘${task?.title}’ task and its subtasks? This action cannot be reversed.`}
             onDelete={handleDelete}
-            onCancel={() => deleteModalRef.current?.close()}
-            onClose={closeRootModal!}
+            onClose={() => deleteModalRef.current?.close()}
           />
         ) : (
           <DeleteModal
             content={`Are you sure you want to delete the ‘${board?.name}’ board? This action will remove all columns and tasks and cannot be reversed.`}
             onDelete={handleDelete}
-            onCancel={() => deleteModalRef.current?.close()}
             onClose={() => deleteModalRef.current?.close()}
           />
         )}
