@@ -14,13 +14,11 @@ export async function getBoardById(id: string) {
 }
 
 export async function deleteBoard(id: string) {
-  const res = await prisma.board.delete({
+  await prisma.board.delete({
     where: {
       id,
     },
   });
-
-  return res;
 }
 
 export default async function handler(
@@ -35,7 +33,7 @@ export default async function handler(
 
       case "DELETE":
         await deleteBoard(req.query.id as string);
-        return res.status(204);
+        return res.status(200).json({ success: true });
 
       default:
         return res

@@ -1,17 +1,13 @@
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input, Button, DeletableInput } from "@features/ui";
+import { createTaskSchema, ICreateTask } from "@lib/validation";
+import axios from "@lib/axios";
 
 interface IProps {
   onClose: () => void;
   columnId: string;
-}
-
-interface FormValues {
-  title: string;
-  description: string;
-  columnId: string;
-  subtasks: { title: string }[];
 }
 
 export function CreateTask({ onClose, columnId }: IProps) {
@@ -20,21 +16,23 @@ export function CreateTask({ onClose, columnId }: IProps) {
     handleSubmit,
     formState: { errors, isDirty },
     control,
-  } = useForm<FormValues>({
+  } = useForm<ICreateTask>({
     defaultValues: {
       title: "",
       description: "",
       columnId,
-      subtasks: [{ title: "" }],
+      subtasks: [{ title: "", isCompleted: false }],
     },
+    resolver: zodResolver(createTaskSchema),
   });
   const { fields, append, remove } = useFieldArray({
     control,
     name: "subtasks",
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (val) => {
-    console.log(val);
+  const onSubmit: SubmitHandler<ICreateTask> = async (values) => {
+    const parsedValues = createTaskSchema.parse(values);
+    await axios.post("/tasks", parsedValues);
     onClose();
   };
 
@@ -68,7 +66,10 @@ export function CreateTask({ onClose, columnId }: IProps) {
               placeholder="e.g. Changer header CSS rules"
             />
           ))}
-          <Button buttonStyle="secondary" onClick={() => append({ title: "" })}>
+          <Button
+            buttonStyle="secondary"
+            onClick={() => append({ title: "", isCompleted: false })}
+          >
             add new subtask
           </Button>
         </div>

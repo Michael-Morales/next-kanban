@@ -37,8 +37,9 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
   const title = task ? "task" : "board";
 
   const handleDelete = async () => {
-    if (task) {
-      console.log("delete task");
+    if (task && closeRootModal) {
+      await axios.delete(`/tasks/${task.id}`);
+      closeRootModal();
     } else if (board) {
       await axios.delete(`/boards/${board.id}`);
       deleteModalRef.current?.close();

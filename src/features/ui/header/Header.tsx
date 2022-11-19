@@ -84,10 +84,10 @@ export const Header = forwardRef<{ closeMenu: () => void }, IProps>(
               {board ? board.name : "Select a board"}
             </h1>
           </div>
-          <button className="px-2.5" onClick={handleMenuOpen}>
+          <button className="px-2.5" onClick={handleMenuOpen} disabled={!board}>
             <Image src={ellipsisIcon} alt="" />
           </button>
-          <Menu ref={menuRef} board={board} />
+          {board && <Menu ref={menuRef} board={board} />}
         </header>
       </>
     );
