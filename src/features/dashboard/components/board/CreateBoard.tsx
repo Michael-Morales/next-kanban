@@ -3,7 +3,8 @@ import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input, DeletableInput, Button } from "@features/ui";
-import { createBoardSchema, ICreateBoard } from "@lib/validation/dashboard";
+import { createBoardSchema, ICreateBoard } from "@lib/validation";
+import axios from "@lib/axios";
 
 interface IProps {
   onClose: () => void;
@@ -11,7 +12,6 @@ interface IProps {
 
 export function CreateBoard({ onClose }: IProps) {
   const router = useRouter();
-  const boardId = router.query.id;
   const {
     register,
     handleSubmit,
@@ -20,7 +20,7 @@ export function CreateBoard({ onClose }: IProps) {
   } = useForm<ICreateBoard>({
     defaultValues: {
       name: "",
-      columns: [{ name: "", boardId: boardId as string }],
+      columns: [{ name: "" }],
     },
     resolver: zodResolver(createBoardSchema),
   });
@@ -31,14 +31,9 @@ export function CreateBoard({ onClose }: IProps) {
 
   const onSubmit: SubmitHandler<ICreateBoard> = async (values) => {
     const parsedValues = createBoardSchema.parse(values);
-    await fetch("/api/boards", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(parsedValues),
-    });
+    const { data } = await axios.post("/boards", parsedValues);
     onClose();
+    router.push(`/dashboard/${data.boardId}`);
   };
 
   const checkErrors = () => {
@@ -68,10 +63,7 @@ export function CreateBoard({ onClose }: IProps) {
               placeholder="e.g. TODO"
             />
           ))}
-          <Button
-            buttonStyle="secondary"
-            onClick={() => append({ name: "", boardId: boardId as string })}
-          >
+          <Button buttonStyle="secondary" onClick={() => append({ name: "" })}>
             add new column
           </Button>
         </div>

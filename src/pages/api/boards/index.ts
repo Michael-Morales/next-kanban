@@ -1,17 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import prisma from "@lib/prismadb";
-import { createBoardSchema } from "@lib/validation/dashboard";
+import { createBoardSchema } from "@lib/validation";
 
 export async function getBoards() {
   const res = await prisma.board.findMany();
   return res;
 }
 
-export async function createBoard(
-  name: string,
-  columns: { name: string; boardId: string }[]
-) {
+export async function createBoard(name: string, columns: { name: string }[]) {
   return await prisma.board.create({
     data: {
       name,
@@ -32,7 +29,6 @@ export default async function handler(
         return await getBoards();
 
       case "POST":
-        console.log(req.body);
         const { name, columns } = createBoardSchema.parse(req.body);
         const board = await createBoard(name, columns);
         return res
@@ -45,8 +41,7 @@ export default async function handler(
           .json({ message: `HTTP method ${req.method} is not supported.` });
     }
   } catch (err: any) {
-    return res
-      .status(500)
-      .json({ message: "Something went wrong.", error: err });
+    console.log(err);
+    return res.status(500).json({ message: "Something went wrong." });
   }
 }
