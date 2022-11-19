@@ -1,13 +1,13 @@
+import type { Board, Column } from "@prisma/client";
 import { useState, useRef } from "react";
 import Head from "next/head";
 
 import { Header, DesktopNav, ShowSidebarIcon } from "@features/ui";
-import { IBoard } from "@features/dashboard";
 
 interface IProps {
   children: JSX.Element;
-  board?: IBoard;
-  boards: IBoard[];
+  board?: Board & { columns: Column[] };
+  boards: Board[];
 }
 
 export function Layout({ children, board, boards }: IProps) {

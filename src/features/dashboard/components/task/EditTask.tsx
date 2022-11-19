@@ -1,17 +1,17 @@
+import type { Task, Subtask } from "@prisma/client";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 
 import { Input, Button, DeletableInput } from "@features/ui";
-import { ITask } from "@features/dashboard";
 
 interface IProps {
   onClose: () => void;
-  task: ITask;
+  task: Task & { subtasks: Subtask[] };
 }
 
 interface FormValues {
   id: string;
   title: string;
-  description: string;
+  description: string | null;
   subtasks: { id?: string; title: string }[];
 }
 

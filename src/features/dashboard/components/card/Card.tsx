@@ -1,10 +1,11 @@
+import type { Task, Subtask } from "@prisma/client";
 import { useRef } from "react";
 
-import { ITask, ISubtask, TaskView } from "@features/dashboard";
+import { TaskView } from "@features/dashboard";
 import { Modal, IModalHandle } from "@features/ui";
 
 interface IProps {
-  task: ITask & { subtasks: ISubtask[] };
+  task: Task & { subtasks: Subtask[] };
 }
 
 export function Card({ task }: IProps) {

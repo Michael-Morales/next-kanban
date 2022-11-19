@@ -1,12 +1,13 @@
+import type { Board } from "@prisma/client";
 import { useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
 import { BoardIcon, Modal, IModalHandle } from "@features/ui";
-import { CreateBoard, IBoard } from "@features/dashboard";
+import { CreateBoard } from "@features/dashboard";
 
 interface IProps {
-  boards: IBoard[];
+  boards: Board[];
 }
 
 export function Nav({ boards }: IProps) {

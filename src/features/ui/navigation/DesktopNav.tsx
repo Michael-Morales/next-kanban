@@ -1,12 +1,13 @@
-import { Nav } from "./Nav";
+import type { Board } from "@prisma/client";
 
 import { HideSidebarIcon } from "@features/ui";
-import { IBoard } from "@features/dashboard";
+
+import { Nav } from "./Nav";
 
 interface IProps {
   isOpen: boolean;
   onClose: () => void;
-  boards: IBoard[];
+  boards: Board[];
 }
 
 export function DesktopNav({ isOpen, onClose, boards }: IProps) {

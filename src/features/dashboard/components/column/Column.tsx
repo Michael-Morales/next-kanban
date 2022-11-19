@@ -1,8 +1,10 @@
+import type { Column, Task, Subtask } from "@prisma/client";
+
 import { Card } from "../card";
-import { IColumn, NewTask, ITask, ISubtask } from "@features/dashboard";
+import { NewTask } from "@features/dashboard";
 
 interface IProps {
-  column: IColumn & { tasks: (ITask & { subtasks: ISubtask[] })[] };
+  column: Column & { tasks: (Task & { subtasks: Subtask[] })[] };
 }
 
 export function Column({ column }: IProps) {

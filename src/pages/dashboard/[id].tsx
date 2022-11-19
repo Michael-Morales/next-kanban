@@ -1,4 +1,7 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import type {
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+} from "next";
 
 import { Layout } from "@features/ui";
 import { Column, NewColumn } from "@features/dashboard";

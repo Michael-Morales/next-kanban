@@ -1,3 +1,4 @@
+import type { Board, Column } from "@prisma/client";
 import {
   useState,
   useImperativeHandle,
@@ -10,7 +11,6 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 
 import { MobileNav, Menu, IMenuHandle, Overlay } from "@features/ui";
-import { IBoard } from "@features/dashboard";
 
 import mobileLogo from "@images/logo-mobile.svg";
 import desktopLogo from "@images/logo-dark.svg";
@@ -19,8 +19,8 @@ import chevronUpIcon from "@images/icon-chevron-up.svg";
 import chevronDownIcon from "@images/icon-chevron-down.svg";
 
 interface IProps {
-  board: IBoard;
-  boards: IBoard[];
+  board: Board & { columns: Column[] };
+  boards: Board[];
 }
 
 export const Header = forwardRef<{ closeMenu: () => void }, IProps>(

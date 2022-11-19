@@ -1,10 +1,14 @@
+import type { InferGetServerSidePropsType } from "next";
+
 import { Empty } from "@features/dashboard";
 import { Layout } from "@features/ui";
 import prisma from "@lib/prismadb";
 
-export default function Dashboard() {
+export default function Dashboard({
+  boards,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <Layout>
+    <Layout boards={boards}>
       <Empty
         title="There are no boards. Create a new board to get started."
         buttonLabel="create new board"
@@ -26,6 +30,8 @@ export async function getServerSideProps() {
   }
 
   return {
-    props: {},
+    props: {
+      boards,
+    },
   };
 }

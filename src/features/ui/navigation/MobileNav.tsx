@@ -1,10 +1,10 @@
-import { IBoard } from "@features/dashboard";
+import type { Board } from "@prisma/client";
 
 import { Nav } from "./Nav";
 
 interface IProps {
   isOpen: boolean;
-  boards: IBoard[];
+  boards: Board[];
 }
 
 export function MobileNav({ isOpen, boards }: IProps) {

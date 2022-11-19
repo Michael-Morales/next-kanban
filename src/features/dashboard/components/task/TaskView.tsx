@@ -1,11 +1,11 @@
+import type { Subtask } from "@prisma/client";
 import { useForm, SubmitHandler } from "react-hook-form";
 
-import { ISubtask } from "@features/dashboard";
 import { Checkbox, Button } from "@features/ui";
 
 interface IProps {
   description: string | null;
-  subtasks: ISubtask[];
+  subtasks: Subtask[];
   completedSubtasks: string[];
   onClose: () => void;
 }

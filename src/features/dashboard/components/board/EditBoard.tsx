@@ -1,11 +1,11 @@
+import type { Board, Column } from "@prisma/client";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 
 import { Input, DeletableInput, Button } from "@features/ui";
-import { IBoard } from "@features/dashboard";
 
 interface IProps {
   onClose: () => void;
-  board: IBoard;
+  board: Board & { columns: Column[] };
 }
 
 interface FormValues {

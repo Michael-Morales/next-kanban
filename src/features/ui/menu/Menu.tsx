@@ -1,3 +1,4 @@
+import type { Board, Column, Task, Subtask } from "@prisma/client";
 import {
   useState,
   forwardRef,
@@ -7,11 +8,11 @@ import {
 } from "react";
 
 import { Modal, IModalHandle, DeleteModal } from "@features/ui";
-import { ITask, EditTask, IBoard, EditBoard } from "@features/dashboard";
+import { EditTask, EditBoard } from "@features/dashboard";
 
 interface IProps {
-  task?: ITask;
-  board?: IBoard;
+  task?: Task & { subtasks: Subtask[] };
+  board?: Board & { columns: Column[] };
   closeRootModal?: () => void;
 }
 
