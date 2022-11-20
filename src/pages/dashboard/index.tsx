@@ -1,14 +1,12 @@
-import type { InferGetServerSidePropsType } from "next";
+import { QueryClient, dehydrate } from "@tanstack/react-query";
 
 import { Empty } from "@features/dashboard";
 import { Layout } from "@features/ui";
 import { getBoards } from "@api/boards";
 
-export default function Dashboard({
-  boards,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function Dashboard() {
   return (
-    <Layout boards={boards}>
+    <Layout>
       <Empty
         title="There are no boards. Create a new board to get started."
         buttonLabel="create new board"
@@ -18,7 +16,9 @@ export default function Dashboard({
 }
 
 export async function getServerSideProps() {
-  const boards = await getBoards();
+  const queryClient = new QueryClient();
+
+  const boards = await queryClient.fetchQuery(["boards"], getBoards);
 
   if (!!boards.length) {
     return {
@@ -31,7 +31,7 @@ export async function getServerSideProps() {
 
   return {
     props: {
-      boards,
+      dehydratedState: dehydrate(queryClient),
     },
   };
 }

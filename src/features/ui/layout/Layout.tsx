@@ -1,4 +1,3 @@
-import type { Board, Column } from "@prisma/client";
 import { useState, useRef } from "react";
 import Head from "next/head";
 
@@ -6,11 +5,9 @@ import { Header, DesktopNav, ShowSidebarIcon } from "@features/ui";
 
 interface IProps {
   children: JSX.Element;
-  board?: Board & { columns: Column[] };
-  boards: Board[];
 }
 
-export function Layout({ children, board, boards }: IProps) {
+export function Layout({ children }: IProps) {
   const [isOpen, setIsOpen] = useState(false);
   const headerRef = useRef<{ closeMenu: () => void }>(null);
 
@@ -24,13 +21,9 @@ export function Layout({ children, board, boards }: IProps) {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header ref={headerRef} board={board!} boards={boards} />
+      <Header ref={headerRef} />
       <div className="flex" onClick={() => headerRef.current?.closeMenu()}>
-        <DesktopNav
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
-          boards={boards}
-        />
+        <DesktopNav isOpen={isOpen} onClose={() => setIsOpen(false)} />
         <main
           className={`h-[calc(100vh-60px)] w-full overflow-auto transition-[margin-left] md:h-[calc(100vh-68px)] ${
             isOpen ? "ml-72" : "ml-0"
