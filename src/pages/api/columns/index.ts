@@ -21,7 +21,7 @@ export default async function handler(
       case "POST":
         const { name, boardId } = createColumnSchema.parse(req.body);
         await createColumn(name, boardId!);
-        return res.status(201).json({ message: "Column created" });
+        return res.status(201).json({ success: true });
 
       default:
         return res

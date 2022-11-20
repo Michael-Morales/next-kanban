@@ -5,4 +5,9 @@ export const createSubtaskSchema = z.object({
   isCompleted: z.boolean(),
 });
 
+export const toggleSubtaskSchema = z.object({
+  subtasks: z.array(z.string().cuid()),
+});
+
 export type ICreateSubtask = z.infer<typeof createSubtaskSchema>;
+export type IToggleSubtask = z.infer<typeof toggleSubtaskSchema>;

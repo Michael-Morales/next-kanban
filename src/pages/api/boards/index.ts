@@ -31,7 +31,7 @@ export default async function handler(
       case "POST":
         const { name, columns } = createBoardSchema.parse(req.body);
         const { id } = await createBoard(name, columns);
-        return res.status(201).json({ message: "Board created.", boardId: id });
+        return res.status(201).json({ success: true, boardId: id });
 
       default:
         return res

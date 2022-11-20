@@ -31,7 +31,7 @@ export default async function handler(
         const { title, columnId, subtasks, description } =
           createTaskSchema.parse(req.body);
         await createTask(title, columnId, subtasks, description);
-        return res.status(201).json({ message: "Task created" });
+        return res.status(201).json({ success: true });
 
       default:
         return res
