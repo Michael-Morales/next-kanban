@@ -5,4 +5,9 @@ export const createColumnSchema = z.object({
   boardId: z.string().cuid().optional(),
 });
 
+export const updateColumnSchema = createColumnSchema.extend({
+  id: z.string(),
+});
+
 export type ICreateColumn = z.infer<typeof createColumnSchema>;
+export type IUpdateColumn = z.infer<typeof updateColumnSchema>;

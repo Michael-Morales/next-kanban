@@ -27,8 +27,10 @@ export default function Board({
 export async function getServerSideProps({
   params,
 }: GetServerSidePropsContext) {
-  const boards = await getBoards();
-  const board = await getBoardById(params?.id as string);
+  const [boards, board] = await Promise.all([
+    getBoards(),
+    getBoardById(params?.id as string),
+  ]);
 
   if (!board) {
     return {

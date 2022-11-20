@@ -84,7 +84,10 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
         {task ? (
           <EditTask onClose={closeRootModal!} task={task!} />
         ) : (
-          <EditBoard onClose={closeRootModal!} board={board!} />
+          <EditBoard
+            onClose={() => editModalRef.current?.close()}
+            board={board!}
+          />
         )}
       </Modal>
       <Modal ref={deleteModalRef} title={`Delete this ${title}`} type="delete">
