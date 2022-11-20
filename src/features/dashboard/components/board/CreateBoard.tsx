@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 
 import { Input, DeletableInput, Button } from "@features/ui";
 import { createBoardSchema, ICreateBoard } from "@lib/validation";
@@ -28,16 +29,21 @@ export function CreateBoard({ onClose }: IProps) {
     control,
     name: "columns",
   });
+  const mutation = useMutation({
+    mutationFn: (values: ICreateBoard) => axios.post("/boards", values),
+    onSuccess: ({ data }) => {
+      onClose();
+      router.push(`/dashboard/${data.boardId}`);
+    },
+  });
 
   const onSubmit: SubmitHandler<ICreateBoard> = async (values) => {
     const parsedValues = createBoardSchema.parse(values);
-    const { data } = await axios.post("/boards", parsedValues);
-    onClose();
-    router.push(`/dashboard/${data.boardId}`);
+    mutation.mutate(parsedValues);
   };
 
   const checkErrors = () => {
-    return !isDirty || !!errors.name || !!errors.columns;
+    return !isDirty || !!errors.name || !!errors.columns || mutation.isLoading;
   };
 
   return (
