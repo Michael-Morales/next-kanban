@@ -1,46 +1,45 @@
+import type { Task, Subtask } from "@prisma/client";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input, Button, DeletableInput } from "@features/ui";
-import { ITask } from "@features/dashboard";
+import { updateTaskSchema, IUpdateTask } from "@lib/validation";
+import axios from "@lib/axios";
 
 interface IProps {
   onClose: () => void;
-  task: ITask;
-}
-
-interface FormValues {
-  id: string;
-  title: string;
-  description: string;
-  subtasks: { id?: string; title: string }[];
+  task: Task & { subtasks: Subtask[] };
 }
 
 export function EditTask({ onClose, task }: IProps) {
   const { id, title, description, subtasks } = task;
-  const mappedSubtasks = subtasks.map(({ id, title }) => ({ id, title }));
+  const mappedSubtasks = subtasks.map(({ id, title, isCompleted }) => ({
+    id,
+    title,
+    isCompleted,
+  }));
   const {
     register,
     handleSubmit,
     formState: { errors, isDirty },
     control,
-  } = useForm<FormValues>({
+  } = useForm<IUpdateTask>({
     defaultValues: {
-      id,
       title,
       description,
       subtasks: mappedSubtasks,
     },
+    resolver: zodResolver(updateTaskSchema),
   });
   const { fields, append, remove } = useFieldArray({
     control,
     name: "subtasks",
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (val) => {
-    console.log(val);
-    if (onClose) {
-      onClose();
-    }
+  const onSubmit: SubmitHandler<IUpdateTask> = async (values) => {
+    const parsedValues = updateTaskSchema.parse(values);
+    await axios.patch(`/tasks/${id}`, parsedValues);
+    onClose();
   };
 
   const checkErrors = () => {
@@ -73,7 +72,10 @@ export function EditTask({ onClose, task }: IProps) {
               placeholder="e.g. Change header CSS rules"
             />
           ))}
-          <Button buttonStyle="secondary" onClick={() => append({ title: "" })}>
+          <Button
+            buttonStyle="secondary"
+            onClick={() => append({ id: "", title: "", isCompleted: false })}
+          >
             add new subtask
           </Button>
         </div>

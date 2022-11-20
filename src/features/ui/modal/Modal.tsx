@@ -1,3 +1,4 @@
+import type { Task, Subtask } from "@prisma/client";
 import {
   useState,
   useEffect,
@@ -12,14 +13,13 @@ import { CSSTransition } from "react-transition-group";
 
 import { Overlay } from "./Overlay";
 import { Menu, IMenuHandle } from "@features/ui";
-import { ITask } from "@features/dashboard";
 
 import ellipsisIcon from "@images/icon-vertical-ellipsis.svg";
 
 interface IProps {
   children: JSX.Element;
   title: string;
-  task?: ITask;
+  task?: Task & { subtasks: Subtask[] };
   type?: "delete";
 }
 

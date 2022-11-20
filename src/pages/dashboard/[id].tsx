@@ -1,17 +1,21 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import type {
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+} from "next";
 
 import { Layout } from "@features/ui";
 import { Column, NewColumn } from "@features/dashboard";
-
-import data from "../../data.json";
+import { getBoards } from "@api/boards";
+import { getBoardById } from "@api/boards/[id]";
 
 export default function Board({
-  columns,
+  board,
+  boards,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <Layout>
+    <Layout board={board} boards={boards}>
       <div className="flex min-h-full gap-x-6 px-4 py-6 md:px-6">
-        {columns.map((column) => (
+        {board.columns.map((column) => (
           <Column key={column.id} column={column} />
         ))}
         <NewColumn />
@@ -20,8 +24,13 @@ export default function Board({
   );
 }
 
-export async function getServerSideProps({ query }: GetServerSidePropsContext) {
-  const board = data.find(({ id }) => query.id === id);
+export async function getServerSideProps({
+  params,
+}: GetServerSidePropsContext) {
+  const [boards, board] = await Promise.all([
+    getBoards(),
+    getBoardById(params?.id as string),
+  ]);
 
   if (!board) {
     return {
@@ -34,7 +43,8 @@ export async function getServerSideProps({ query }: GetServerSidePropsContext) {
 
   return {
     props: {
-      columns: board.columns,
+      board,
+      boards,
     },
   };
 }

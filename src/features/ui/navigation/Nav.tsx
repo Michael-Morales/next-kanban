@@ -1,3 +1,4 @@
+import type { Board } from "@prisma/client";
 import { useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -5,9 +6,11 @@ import { useRouter } from "next/router";
 import { BoardIcon, Modal, IModalHandle } from "@features/ui";
 import { CreateBoard } from "@features/dashboard";
 
-import data from "../../../data.json";
+interface IProps {
+  boards: Board[];
+}
 
-export function Nav() {
+export function Nav({ boards }: IProps) {
   const router = useRouter();
   const modalRef = useRef<IModalHandle>(null);
 
@@ -15,10 +18,10 @@ export function Nav() {
     <>
       <div>
         <p className="mb-5 text-xs font-bold uppercase tracking-widest">
-          all boards ({data.length})
+          all boards ({boards.length})
         </p>
         <nav className="isolate flex flex-col">
-          {data.map(({ id, name }) => {
+          {boards.map(({ id, name }) => {
             const active = router.query.id === id;
 
             return (

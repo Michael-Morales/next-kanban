@@ -1,33 +1,39 @@
+import { useRouter } from "next/router";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input, DeletableInput, Button } from "@features/ui";
+import { createBoardSchema, ICreateBoard } from "@lib/validation";
+import axios from "@lib/axios";
 
 interface IProps {
   onClose: () => void;
 }
 
-interface FormValues {
-  name: string;
-  columns: { name: string }[];
-}
-
 export function CreateBoard({ onClose }: IProps) {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     control,
     formState: { errors, isDirty },
-  } = useForm<FormValues>({
-    defaultValues: { name: "", columns: [{ name: "" }] },
+  } = useForm<ICreateBoard>({
+    defaultValues: {
+      name: "",
+      columns: [{ name: "" }],
+    },
+    resolver: zodResolver(createBoardSchema),
   });
   const { fields, append, remove } = useFieldArray({
     control,
     name: "columns",
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (val) => {
-    console.log(val);
+  const onSubmit: SubmitHandler<ICreateBoard> = async (values) => {
+    const parsedValues = createBoardSchema.parse(values);
+    const { data } = await axios.post("/boards", parsedValues);
     onClose();
+    router.push(`/dashboard/${data.boardId}`);
   };
 
   const checkErrors = () => {
@@ -51,6 +57,7 @@ export function CreateBoard({ onClose }: IProps) {
               key={field.id}
               register={register(`columns.${i}.name` as const, {
                 required: true,
+                minLength: 3,
               })}
               remove={() => remove(i)}
               placeholder="e.g. TODO"

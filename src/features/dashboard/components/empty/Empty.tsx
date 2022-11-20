@@ -1,6 +1,7 @@
 import { useRef } from "react";
 
 import { Button, Modal, IModalHandle } from "@features/ui";
+import { CreateBoard } from "@features/dashboard";
 
 interface IProps {
   title: string;
@@ -21,7 +22,7 @@ export function Empty({ title, buttonLabel }: IProps) {
         </div>
       </div>
       <Modal ref={modalRef} title="Add new board">
-        <div>create board</div>
+        <CreateBoard onClose={() => modalRef.current?.close()} />
       </Modal>
     </>
   );

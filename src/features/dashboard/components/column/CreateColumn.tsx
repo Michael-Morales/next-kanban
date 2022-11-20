@@ -1,15 +1,13 @@
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button, Input } from "@features/ui";
+import { createColumnSchema, ICreateColumn } from "@lib/validation";
+import axios from "@lib/axios";
 
 interface IProps {
   onClose: () => void;
-}
-
-interface FormValues {
-  title: string;
-  boardId: string;
 }
 
 export function CreateColumn({ onClose }: IProps) {
@@ -19,26 +17,28 @@ export function CreateColumn({ onClose }: IProps) {
     register,
     handleSubmit,
     formState: { errors, isDirty },
-  } = useForm<FormValues>({
+  } = useForm<ICreateColumn>({
     defaultValues: {
-      title: "",
+      name: "",
       boardId: boardId as string,
     },
+    resolver: zodResolver(createColumnSchema),
   });
 
-  const onSubmit: SubmitHandler<FormValues> = (val) => {
-    console.log(val);
+  const onSubmit: SubmitHandler<ICreateColumn> = async (values) => {
+    const parsedValues = createColumnSchema.parse(values);
+    await axios.post("/columns", parsedValues);
     onClose();
   };
 
   return (
     <form className="flex flex-col gap-y-6" onSubmit={handleSubmit(onSubmit)}>
       <Input
-        label="title"
-        register={register("title", { required: true, minLength: 3 })}
+        label="column name"
+        register={register("name", { required: true, minLength: 3 })}
         placeholder="e.g. TODO"
       />
-      <Button type="submit" disabled={!isDirty || !!errors.title}>
+      <Button type="submit" disabled={!isDirty || !!errors.name}>
         create column
       </Button>
     </form>

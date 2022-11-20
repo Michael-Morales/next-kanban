@@ -1,20 +1,23 @@
-import { Nav } from "./Nav";
+import type { Board } from "@prisma/client";
 
 import { HideSidebarIcon } from "@features/ui";
+
+import { Nav } from "./Nav";
 
 interface IProps {
   isOpen: boolean;
   onClose: () => void;
+  boards: Board[];
 }
 
-export function DesktopNav({ isOpen, onClose }: IProps) {
+export function DesktopNav({ isOpen, onClose, boards }: IProps) {
   return (
     <div
       className={`fixed z-20 hidden h-[calc(100vh-68px)] w-72 overflow-y-auto border-t border-secondary bg-white p-8 transition-transform md:flex md:flex-col md:justify-between ${
         isOpen ? "translate-x-0" : "-translate-x-72"
       }`}
     >
-      <Nav />
+      <Nav boards={boards} />
       <button
         className="group relative flex items-center gap-x-4 py-3 font-bold capitalize text-body transition-colors hover:text-primary"
         onClick={onClose}
