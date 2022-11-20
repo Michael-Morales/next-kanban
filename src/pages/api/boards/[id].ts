@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import type { Column } from "@prisma/client";
 
 import prisma from "@lib/prismadb";
 import { updateBoardSchema } from "@lib/validation";
@@ -25,7 +26,7 @@ export async function deleteBoard(id: string) {
 export async function updateBoard(
   id: string,
   name: string,
-  columns: { id: string; name: string }[]
+  columns: Omit<Column, "boardId">[]
 ) {
   await prisma.board.update({
     where: { id },

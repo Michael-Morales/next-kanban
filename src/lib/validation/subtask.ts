@@ -9,5 +9,10 @@ export const toggleSubtaskSchema = z.object({
   subtasks: z.array(z.string().cuid()),
 });
 
+export const updateSubtaskSchema = createSubtaskSchema.extend({
+  id: z.string(),
+});
+
 export type ICreateSubtask = z.infer<typeof createSubtaskSchema>;
 export type IToggleSubtask = z.infer<typeof toggleSubtaskSchema>;
+export type IUpdateSubtask = z.infer<typeof updateSubtaskSchema>;
