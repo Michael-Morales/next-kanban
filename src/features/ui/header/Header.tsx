@@ -33,6 +33,7 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
       const { data } = await axios.get(`/boards/${router.query.id}`);
       return data;
     },
+    refetchOnWindowFocus: false,
   });
 
   const handleOpenNav = () => {

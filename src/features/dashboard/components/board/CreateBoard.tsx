@@ -74,7 +74,11 @@ export function CreateBoard({ onClose }: IProps) {
           </Button>
         </div>
       </fieldset>
-      <Button type="submit" disabled={checkErrors()}>
+      <Button
+        type="submit"
+        disabled={checkErrors()}
+        loading={mutation.isLoading}
+      >
         create new board
       </Button>
     </form>

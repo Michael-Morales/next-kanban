@@ -6,6 +6,7 @@ export const createSubtaskSchema = z.object({
 });
 
 export const toggleSubtaskSchema = z.object({
+  taskId: z.string().cuid(),
   subtasks: z.array(z.string().cuid()),
 });
 

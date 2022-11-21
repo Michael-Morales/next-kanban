@@ -90,7 +90,11 @@ export function EditTask({ onClose, task }: IProps) {
           </Button>
         </div>
       </fieldset>
-      <Button type="submit" disabled={checkErrors()}>
+      <Button
+        type="submit"
+        disabled={checkErrors()}
+        loading={mutation.isLoading}
+      >
         save changes
       </Button>
     </form>

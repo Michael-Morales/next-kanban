@@ -39,6 +39,10 @@ export function CreateColumn({ onClose }: IProps) {
     mutation.mutate(parsedValues);
   };
 
+  const checkErrors = () => {
+    return !isDirty || !!errors.name || mutation.isLoading;
+  };
+
   return (
     <form className="flex flex-col gap-y-6" onSubmit={handleSubmit(onSubmit)}>
       <Input
@@ -48,7 +52,8 @@ export function CreateColumn({ onClose }: IProps) {
       />
       <Button
         type="submit"
-        disabled={!isDirty || !!errors.name || mutation.isLoading}
+        disabled={checkErrors()}
+        loading={mutation.isLoading}
       >
         create column
       </Button>

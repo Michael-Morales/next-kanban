@@ -25,11 +25,14 @@ export function Card({ task }: IProps) {
           {title}
         </h3>
         <p className="text-xs font-bold">
-          {completedSubtasks.length} of {subtasks.length} subtasks
+          {!!subtasks.length
+            ? `${completedSubtasks.length} of ${subtasks.length} subtasks`
+            : "No subtask"}
         </p>
       </div>
       <Modal ref={modalRef} title={title} task={task}>
         <TaskView
+          taskId={task.id}
           description={description}
           subtasks={subtasks}
           completedSubtasks={completedSubtasks}

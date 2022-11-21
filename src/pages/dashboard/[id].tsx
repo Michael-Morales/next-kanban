@@ -26,6 +26,7 @@ export default function Board() {
       const { data } = await axios.get(`/boards/${router.query.id}`);
       return data;
     },
+    refetchOnWindowFocus: false,
   });
 
   return (

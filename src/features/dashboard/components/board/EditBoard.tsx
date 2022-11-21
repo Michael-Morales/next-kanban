@@ -78,7 +78,11 @@ export function EditBoard({ onClose, board }: IProps) {
           </Button>
         </div>
       </fieldset>
-      <Button type="submit" disabled={checkErrors()}>
+      <Button
+        type="submit"
+        disabled={checkErrors()}
+        loading={mutation.isLoading}
+      >
         save changes
       </Button>
     </form>

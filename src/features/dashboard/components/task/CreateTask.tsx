@@ -84,7 +84,11 @@ export function CreateTask({ onClose, columnId }: IProps) {
           </Button>
         </div>
       </fieldset>
-      <Button type="submit" disabled={checkErrors()}>
+      <Button
+        type="submit"
+        disabled={checkErrors()}
+        loading={mutation.isLoading}
+      >
         create task
       </Button>
     </form>

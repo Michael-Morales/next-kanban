@@ -17,6 +17,7 @@ export function Nav() {
       const { data } = await axios.get("/boards");
       return data;
     },
+    refetchOnWindowFocus: false,
   });
 
   return (

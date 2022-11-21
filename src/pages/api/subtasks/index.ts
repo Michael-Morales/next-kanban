@@ -3,10 +3,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@lib/prismadb";
 import { toggleSubtaskSchema } from "@lib/validation";
 
-export async function toggleSubtask(ids: string[]) {
+export async function toggleSubtask(taskId: string, ids: string[]) {
   await prisma.subtask.updateMany({
     where: {
       isCompleted: true,
+      taskId,
     },
     data: {
       isCompleted: false,
@@ -29,8 +30,8 @@ export default async function handler(
   try {
     switch (req.method) {
       case "PATCH":
-        const { subtasks } = toggleSubtaskSchema.parse(req.body);
-        await toggleSubtask(subtasks);
+        const { taskId, subtasks } = toggleSubtaskSchema.parse(req.body);
+        await toggleSubtask(taskId, subtasks);
         return res.status(200).json({ success: true });
 
       default:
