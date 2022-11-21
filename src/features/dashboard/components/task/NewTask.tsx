@@ -13,7 +13,7 @@ export function NewTask({ columnId }: IProps) {
   return (
     <>
       <button
-        className="rounded-lg bg-gradient-to-b from-light-blue px-4 py-6 font-bold capitalize transition-colors hover:text-primary"
+        className="w-full rounded-lg bg-gradient-to-b from-light-blue px-4 py-6 font-bold capitalize transition-colors hover:text-primary"
         onClick={() => modalRef.current?.open()}
       >
         add task

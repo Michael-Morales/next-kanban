@@ -1,4 +1,5 @@
 import type { Column, Task, Subtask } from "@prisma/client";
+import { Droppable } from "react-beautiful-dnd";
 
 import { Card } from "../card";
 import { NewTask } from "@features/dashboard";
@@ -15,12 +16,21 @@ export function Column({ column }: IProps) {
       <h2 className="mb-6 text-xs font-bold uppercase tracking-widest">
         {name} ({tasks.length})
       </h2>
-      <div className="flex flex-col gap-y-5">
-        {tasks.map((task) => (
-          <Card key={task.id} task={task} />
-        ))}
-        <NewTask columnId={id} />
-      </div>
+      <Droppable droppableId={id}>
+        {(provided) => (
+          <div
+            ref={provided.innerRef}
+            {...provided.droppableProps}
+            className="mb-5 flex flex-col gap-y-5"
+          >
+            {tasks.map((task, i) => (
+              <Card key={task.id} task={task} idx={i} />
+            ))}
+            {provided.placeholder}
+          </div>
+        )}
+      </Droppable>
+      <NewTask columnId={id} />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import type {
 } from "@prisma/client";
 import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
+import { DragDropContext } from "react-beautiful-dnd";
 
 import { Layout } from "@features/ui";
 import { Column, NewColumn } from "@features/dashboard";
@@ -31,12 +32,14 @@ export default function Board() {
 
   return (
     <Layout>
-      <div className="flex min-h-full gap-x-6 px-4 py-6 md:px-6">
-        {board?.columns.map((column) => (
-          <Column key={column.id} column={column} />
-        ))}
-        <NewColumn />
-      </div>
+      <DragDropContext onDragEnd={(args) => console.log(args)}>
+        <div className="flex min-h-full gap-x-6 px-4 py-6 md:px-6">
+          {board?.columns.map((column) => (
+            <Column key={column.id} column={column} />
+          ))}
+          <NewColumn />
+        </div>
+      </DragDropContext>
     </Layout>
   );
 }
