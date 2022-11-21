@@ -5,7 +5,6 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Plus_Jakarta_Sans } from "@next/font/google";
 
 import "@styles/globals.css";
@@ -26,7 +25,6 @@ export default function App({ Component, pageProps }: AppProps) {
           <div id="modal" />
         </div>
       </Hydrate>
-      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

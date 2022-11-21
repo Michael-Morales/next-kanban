@@ -30,13 +30,13 @@ export function CreateColumn({ onClose }: IProps) {
     mutationFn: (values: ICreateColumn) => axios.post("/columns", values),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });
+      onClose();
     },
   });
 
   const onSubmit: SubmitHandler<ICreateColumn> = async (values) => {
     const parsedValues = createColumnSchema.parse(values);
     mutation.mutate(parsedValues);
-    onClose();
   };
 
   return (

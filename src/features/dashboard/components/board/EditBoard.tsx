@@ -2,6 +2,7 @@ import type { Board, Column } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Input, DeletableInput, Button } from "@features/ui";
 import { updateBoardSchema, IUpdateBoard } from "@lib/validation";
@@ -28,15 +29,23 @@ export function EditBoard({ onClose, board }: IProps) {
     control,
     name: "columns",
   });
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (values: IUpdateBoard) =>
+      axios.patch(`/boards/${router.query.id}`, values),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["boards"]);
+      onClose();
+    },
+  });
 
   const onSubmit: SubmitHandler<IUpdateBoard> = async (values) => {
     const parsedValues = updateBoardSchema.parse(values);
-    await axios.patch(`/boards/${router.query.id}`, parsedValues);
-    onClose();
+    mutation.mutate(parsedValues);
   };
 
   const checkErrors = () => {
-    return !isDirty || !!errors.name || !!errors.columns;
+    return !isDirty || !!errors.name || !!errors.columns || mutation.isLoading;
   };
 
   return (

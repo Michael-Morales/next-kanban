@@ -1,5 +1,6 @@
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Input, Button, DeletableInput } from "@features/ui";
 import { createTaskSchema, ICreateTask } from "@lib/validation";
@@ -29,15 +30,24 @@ export function CreateTask({ onClose, columnId }: IProps) {
     control,
     name: "subtasks",
   });
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (values: ICreateTask) => axios.post("/tasks", values),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["boards"]);
+      onClose();
+    },
+  });
 
   const onSubmit: SubmitHandler<ICreateTask> = async (values) => {
     const parsedValues = createTaskSchema.parse(values);
-    await axios.post("/tasks", parsedValues);
-    onClose();
+    mutation.mutate(parsedValues);
   };
 
   const checkErrors = () => {
-    return !isDirty || !!errors.title || !!errors.subtasks;
+    return (
+      !isDirty || !!errors.title || !!errors.subtasks || mutation.isLoading
+    );
   };
 
   return (
