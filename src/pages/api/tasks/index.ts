@@ -7,13 +7,15 @@ export async function createTask(
   title: string,
   columnId: string,
   subtasks: { title: string; isCompleted: boolean }[],
-  description?: string
+  description: string | null,
+  position: number
 ) {
   return await prisma.task.create({
     data: {
       title,
       columnId,
       description,
+      position,
       subtasks: {
         createMany: { data: subtasks },
       },
@@ -28,9 +30,9 @@ export default async function handler(
   try {
     switch (req.method) {
       case "POST":
-        const { title, columnId, subtasks, description } =
+        const { title, columnId, subtasks, description, position } =
           createTaskSchema.parse(req.body);
-        await createTask(title, columnId, subtasks, description);
+        await createTask(title, columnId, subtasks, description, position);
         return res.status(201).json({ success: true });
 
       default:

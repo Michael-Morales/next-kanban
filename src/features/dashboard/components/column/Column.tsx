@@ -30,7 +30,7 @@ export function Column({ column }: IProps) {
           </div>
         )}
       </Droppable>
-      <NewTask columnId={id} />
+      <NewTask columnId={id} newIdx={tasks.length} />
     </div>
   );
 }

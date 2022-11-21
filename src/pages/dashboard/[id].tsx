@@ -5,6 +5,7 @@ import type {
   Task,
   Subtask,
 } from "@prisma/client";
+import type { DropResult } from "react-beautiful-dnd";
 import { QueryClient, dehydrate, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { DragDropContext } from "react-beautiful-dnd";
@@ -30,9 +31,14 @@ export default function Board() {
     refetchOnWindowFocus: false,
   });
 
+  const onDrop = (result: DropResult) => {
+    const { draggableId, destination, source } = result;
+    console.log(draggableId, destination, source);
+  };
+
   return (
     <Layout>
-      <DragDropContext onDragEnd={(args) => console.log(args)}>
+      <DragDropContext onDragEnd={onDrop}>
         <div className="flex min-h-full gap-x-6 px-4 py-6 md:px-6">
           {board?.columns.map((column) => (
             <Column key={column.id} column={column} />

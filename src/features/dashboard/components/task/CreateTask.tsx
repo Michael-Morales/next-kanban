@@ -9,19 +9,21 @@ import axios from "@lib/axios";
 interface IProps {
   onClose: () => void;
   columnId: string;
+  newIdx: number;
 }
 
-export function CreateTask({ onClose, columnId }: IProps) {
+export function CreateTask({ onClose, columnId, newIdx }: IProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty, dirtyFields },
+    formState: { errors, dirtyFields },
     control,
   } = useForm<ICreateTask>({
     defaultValues: {
       title: "",
       description: "",
       columnId,
+      position: newIdx,
       subtasks: [{ title: "", isCompleted: false }],
     },
     resolver: zodResolver(createTaskSchema),

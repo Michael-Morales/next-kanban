@@ -4,7 +4,15 @@ import prisma from "@lib/prismadb";
 import { createBoardSchema } from "@lib/validation";
 
 export async function getBoards() {
-  return await prisma.board.findMany();
+  return await prisma.board.findMany({
+    orderBy: {
+      createdAt: "asc",
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+  });
 }
 
 export async function createBoard(name: string, columns: { name: string }[]) {

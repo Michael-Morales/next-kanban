@@ -7,6 +7,7 @@ export const createTaskSchema = z.object({
   description: z.string().nullable(),
   columnId: z.string().cuid(),
   subtasks: z.array(createSubtaskSchema),
+  position: z.number(),
 });
 
 export const updateTaskSchema = createTaskSchema

@@ -5,9 +5,10 @@ import { CreateTask } from "./CreateTask";
 
 interface IProps {
   columnId: string;
+  newIdx: number;
 }
 
-export function NewTask({ columnId }: IProps) {
+export function NewTask({ columnId, newIdx }: IProps) {
   const modalRef = useRef<IModalHandle>(null);
 
   return (
@@ -21,6 +22,7 @@ export function NewTask({ columnId }: IProps) {
       <Modal ref={modalRef} title="Add new task">
         <CreateTask
           columnId={columnId}
+          newIdx={newIdx}
           onClose={() => modalRef.current?.close()}
         />
       </Modal>
