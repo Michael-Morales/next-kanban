@@ -6,13 +6,23 @@ interface IProps {
   register: UseFormRegisterReturn;
   remove: () => void;
   placeholder?: string;
+  error?: string;
 }
 
-export function DeletableInput({ register, remove, placeholder }: IProps) {
+export function DeletableInput({
+  register,
+  remove,
+  placeholder,
+  error,
+}: IProps) {
   return (
     <div className="flex justify-between gap-x-4">
       <input
-        className="flex-1 rounded border-light py-2 px-4 text-sm text-black transition-colors placeholder:text-placeholder hover:border-primary focus:border-primary focus:ring-0 focus:ring-offset-0"
+        className={`${
+          error
+            ? "border-danger hover:border-danger focus:border-danger"
+            : "border-light hover:border-primary focus:border-primary"
+        } flex-1 rounded py-2 px-4 text-sm text-black transition-colors placeholder:text-placeholder focus:ring-0 focus:ring-offset-0`}
         type="text"
         {...register}
         placeholder={placeholder}

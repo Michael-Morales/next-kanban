@@ -49,6 +49,7 @@ export function CreateColumn({ onClose }: IProps) {
         label="column name"
         register={register("name", { required: true, minLength: 3 })}
         placeholder="e.g. TODO"
+        error={errors.name?.message}
       />
       <Button
         type="submit"

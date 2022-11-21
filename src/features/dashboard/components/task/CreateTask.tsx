@@ -15,7 +15,7 @@ export function CreateTask({ onClose, columnId }: IProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, dirtyFields },
     control,
   } = useForm<ICreateTask>({
     defaultValues: {
@@ -46,7 +46,12 @@ export function CreateTask({ onClose, columnId }: IProps) {
 
   const checkErrors = () => {
     return (
-      !isDirty || !!errors.title || !!errors.subtasks || mutation.isLoading
+      !(
+        dirtyFields.title && !!dirtyFields.subtasks?.some(({ title }) => title)
+      ) ||
+      !!errors.title ||
+      !!errors.subtasks ||
+      mutation.isLoading
     );
   };
 
@@ -56,6 +61,7 @@ export function CreateTask({ onClose, columnId }: IProps) {
         label="title"
         register={register("title", { required: true, minLength: 3 })}
         placeholder="e.g. Fix UI bug"
+        error={errors.title?.message}
       />
       <Input
         label="description"
@@ -74,6 +80,7 @@ export function CreateTask({ onClose, columnId }: IProps) {
               })}
               remove={() => remove(i)}
               placeholder="e.g. Changer header CSS rules"
+              error={errors.subtasks?.[i]?.title?.message}
             />
           ))}
           <Button

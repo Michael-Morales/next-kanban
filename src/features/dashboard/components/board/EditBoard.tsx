@@ -54,6 +54,7 @@ export function EditBoard({ onClose, board }: IProps) {
         label="board name"
         placeholder="e.g. Web Design"
         register={register("name", { required: true, minLength: 3 })}
+        error={errors.name?.message}
       />
       <fieldset>
         <legend className="mb-2 text-xs font-bold capitalize">
@@ -68,6 +69,7 @@ export function EditBoard({ onClose, board }: IProps) {
               })}
               remove={() => remove(i)}
               placeholder="e.g. TODO"
+              error={errors.columns?.[i]?.name?.message}
             />
           ))}
           <Button

@@ -62,6 +62,7 @@ export function EditTask({ onClose, task }: IProps) {
         label="title"
         register={register("title", { required: true, minLength: 3 })}
         placeholder="e.g. Fix UI bug"
+        error={errors.title?.message}
       />
       <Input
         label="description"
@@ -80,6 +81,7 @@ export function EditTask({ onClose, task }: IProps) {
               })}
               remove={() => remove(i)}
               placeholder="e.g. Change header CSS rules"
+              error={errors.subtasks?.[i]?.title?.message}
             />
           ))}
           <Button

@@ -17,7 +17,7 @@ export function CreateBoard({ onClose }: IProps) {
     register,
     handleSubmit,
     control,
-    formState: { errors, isDirty },
+    formState: { errors, dirtyFields },
   } = useForm<ICreateBoard>({
     defaultValues: {
       name: "",
@@ -43,7 +43,12 @@ export function CreateBoard({ onClose }: IProps) {
   };
 
   const checkErrors = () => {
-    return !isDirty || !!errors.name || !!errors.columns || mutation.isLoading;
+    return (
+      !(dirtyFields.name && !!dirtyFields.columns?.some(({ name }) => name)) ||
+      !!errors.name ||
+      !!errors.columns ||
+      mutation.isLoading
+    );
   };
 
   return (
@@ -52,6 +57,7 @@ export function CreateBoard({ onClose }: IProps) {
         label="board name"
         placeholder="e.g. Web Design"
         register={register("name", { required: true, minLength: 3 })}
+        error={errors.name?.message}
       />
       <fieldset>
         <legend className="mb-2 text-xs font-bold capitalize">
@@ -67,6 +73,7 @@ export function CreateBoard({ onClose }: IProps) {
               })}
               remove={() => remove(i)}
               placeholder="e.g. TODO"
+              error={errors.columns?.[i]?.name?.message}
             />
           ))}
           <Button buttonStyle="secondary" onClick={() => append({ name: "" })}>
