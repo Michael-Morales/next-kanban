@@ -1,5 +1,6 @@
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Input, Button, DeletableInput } from "@features/ui";
 import { createTaskSchema, ICreateTask } from "@lib/validation";
@@ -14,7 +15,7 @@ export function CreateTask({ onClose, columnId }: IProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, dirtyFields },
     control,
   } = useForm<ICreateTask>({
     defaultValues: {
@@ -29,15 +30,29 @@ export function CreateTask({ onClose, columnId }: IProps) {
     control,
     name: "subtasks",
   });
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (values: ICreateTask) => axios.post("/tasks", values),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["boards"]);
+      onClose();
+    },
+  });
 
   const onSubmit: SubmitHandler<ICreateTask> = async (values) => {
     const parsedValues = createTaskSchema.parse(values);
-    await axios.post("/tasks", parsedValues);
-    onClose();
+    mutation.mutate(parsedValues);
   };
 
   const checkErrors = () => {
-    return !isDirty || !!errors.title || !!errors.subtasks;
+    return (
+      !(
+        dirtyFields.title && !!dirtyFields.subtasks?.some(({ title }) => title)
+      ) ||
+      !!errors.title ||
+      !!errors.subtasks ||
+      mutation.isLoading
+    );
   };
 
   return (
@@ -46,6 +61,7 @@ export function CreateTask({ onClose, columnId }: IProps) {
         label="title"
         register={register("title", { required: true, minLength: 3 })}
         placeholder="e.g. Fix UI bug"
+        error={errors.title?.message}
       />
       <Input
         label="description"
@@ -64,6 +80,7 @@ export function CreateTask({ onClose, columnId }: IProps) {
               })}
               remove={() => remove(i)}
               placeholder="e.g. Changer header CSS rules"
+              error={errors.subtasks?.[i]?.title?.message}
             />
           ))}
           <Button
@@ -74,7 +91,11 @@ export function CreateTask({ onClose, columnId }: IProps) {
           </Button>
         </div>
       </fieldset>
-      <Button type="submit" disabled={checkErrors()}>
+      <Button
+        type="submit"
+        disabled={checkErrors()}
+        loading={mutation.isLoading}
+      >
         create task
       </Button>
     </form>

@@ -39,6 +39,7 @@ export async function updateTask(
 
     await prisma.subtask.deleteMany({
       where: {
+        taskId: id,
         id: { notIn: updatedSubtasks.map(({ id }) => id) },
       },
     });

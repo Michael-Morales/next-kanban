@@ -1,6 +1,7 @@
 import type { Task, Subtask } from "@prisma/client";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Input, Button, DeletableInput } from "@features/ui";
 import { updateTaskSchema, IUpdateTask } from "@lib/validation";
@@ -35,15 +36,24 @@ export function EditTask({ onClose, task }: IProps) {
     control,
     name: "subtasks",
   });
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (values: IUpdateTask) => axios.patch(`/tasks/${id}`, values),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["boards"]);
+      onClose();
+    },
+  });
 
   const onSubmit: SubmitHandler<IUpdateTask> = async (values) => {
     const parsedValues = updateTaskSchema.parse(values);
-    await axios.patch(`/tasks/${id}`, parsedValues);
-    onClose();
+    mutation.mutate(parsedValues);
   };
 
   const checkErrors = () => {
-    return !isDirty || !!errors.title || !!errors.subtasks;
+    return (
+      !isDirty || !!errors.title || !!errors.subtasks || mutation.isLoading
+    );
   };
 
   return (
@@ -52,6 +62,7 @@ export function EditTask({ onClose, task }: IProps) {
         label="title"
         register={register("title", { required: true, minLength: 3 })}
         placeholder="e.g. Fix UI bug"
+        error={errors.title?.message}
       />
       <Input
         label="description"
@@ -70,6 +81,7 @@ export function EditTask({ onClose, task }: IProps) {
               })}
               remove={() => remove(i)}
               placeholder="e.g. Change header CSS rules"
+              error={errors.subtasks?.[i]?.title?.message}
             />
           ))}
           <Button
@@ -80,7 +92,11 @@ export function EditTask({ onClose, task }: IProps) {
           </Button>
         </div>
       </fieldset>
-      <Button type="submit" disabled={checkErrors()}>
+      <Button
+        type="submit"
+        disabled={checkErrors()}
+        loading={mutation.isLoading}
+      >
         save changes
       </Button>
     </form>

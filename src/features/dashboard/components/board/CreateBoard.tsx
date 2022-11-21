@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 
 import { Input, DeletableInput, Button } from "@features/ui";
 import { createBoardSchema, ICreateBoard } from "@lib/validation";
@@ -16,7 +17,7 @@ export function CreateBoard({ onClose }: IProps) {
     register,
     handleSubmit,
     control,
-    formState: { errors, isDirty },
+    formState: { errors, dirtyFields },
   } = useForm<ICreateBoard>({
     defaultValues: {
       name: "",
@@ -28,16 +29,26 @@ export function CreateBoard({ onClose }: IProps) {
     control,
     name: "columns",
   });
+  const mutation = useMutation({
+    mutationFn: (values: ICreateBoard) => axios.post("/boards", values),
+    onSuccess: ({ data }) => {
+      onClose();
+      router.push(`/dashboard/${data.boardId}`);
+    },
+  });
 
   const onSubmit: SubmitHandler<ICreateBoard> = async (values) => {
     const parsedValues = createBoardSchema.parse(values);
-    const { data } = await axios.post("/boards", parsedValues);
-    onClose();
-    router.push(`/dashboard/${data.boardId}`);
+    mutation.mutate(parsedValues);
   };
 
   const checkErrors = () => {
-    return !isDirty || !!errors.name || !!errors.columns;
+    return (
+      !(dirtyFields.name && !!dirtyFields.columns?.some(({ name }) => name)) ||
+      !!errors.name ||
+      !!errors.columns ||
+      mutation.isLoading
+    );
   };
 
   return (
@@ -46,6 +57,7 @@ export function CreateBoard({ onClose }: IProps) {
         label="board name"
         placeholder="e.g. Web Design"
         register={register("name", { required: true, minLength: 3 })}
+        error={errors.name?.message}
       />
       <fieldset>
         <legend className="mb-2 text-xs font-bold capitalize">
@@ -61,6 +73,7 @@ export function CreateBoard({ onClose }: IProps) {
               })}
               remove={() => remove(i)}
               placeholder="e.g. TODO"
+              error={errors.columns?.[i]?.name?.message}
             />
           ))}
           <Button buttonStyle="secondary" onClick={() => append({ name: "" })}>
@@ -68,7 +81,11 @@ export function CreateBoard({ onClose }: IProps) {
           </Button>
         </div>
       </fieldset>
-      <Button type="submit" disabled={checkErrors()}>
+      <Button
+        type="submit"
+        disabled={checkErrors()}
+        loading={mutation.isLoading}
+      >
         create new board
       </Button>
     </form>

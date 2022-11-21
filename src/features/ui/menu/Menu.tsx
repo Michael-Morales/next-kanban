@@ -7,6 +7,7 @@ import {
   useRef,
 } from "react";
 import { useRouter } from "next/router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Modal, IModalHandle, DeleteModal } from "@features/ui";
 import { EditTask, EditBoard } from "@features/dashboard";
@@ -33,17 +34,30 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
   const editModalRef = useRef<IModalHandle>(null);
   const deleteModalRef = useRef<IModalHandle>(null);
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const taskMutation = useMutation({
+    mutationFn: () => axios.delete(`/tasks/${task?.id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["boards"]);
+      closeRootModal && closeRootModal();
+    },
+  });
+  const boardMutation = useMutation({
+    mutationFn: () => axios.delete(`/boards/${board?.id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries(["boards"]);
+      deleteModalRef.current?.close();
+      router.push("/dashboard");
+    },
+  });
 
   const title = task ? "task" : "board";
 
   const handleDelete = async () => {
     if (task && closeRootModal) {
-      await axios.delete(`/tasks/${task.id}`);
-      closeRootModal();
+      taskMutation.mutate();
     } else if (board) {
-      await axios.delete(`/boards/${board.id}`);
-      deleteModalRef.current?.close();
-      router.push("/dashboard");
+      boardMutation.mutate();
     }
     setIsOpen(false);
   };
@@ -96,12 +110,14 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
             content={`Are you sure you want to delete the ‘${task?.title}’ task and its subtasks? This action cannot be reversed.`}
             onDelete={handleDelete}
             onClose={() => deleteModalRef.current?.close()}
+            loading={taskMutation.isLoading}
           />
         ) : (
           <DeleteModal
             content={`Are you sure you want to delete the ‘${board?.name}’ board? This action will remove all columns and tasks and cannot be reversed.`}
             onDelete={handleDelete}
             onClose={() => deleteModalRef.current?.close()}
+            loading={boardMutation.isLoading}
           />
         )}
       </Modal>

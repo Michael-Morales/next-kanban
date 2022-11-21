@@ -52,6 +52,7 @@ export async function updateBoard(
 
     await prisma.column.deleteMany({
       where: {
+        boardId: id,
         id: { notIn: updatedColumns.map(({ id }) => id) },
       },
     });
