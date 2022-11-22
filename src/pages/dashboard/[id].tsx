@@ -38,15 +38,14 @@ export default function Board() {
   });
   const queryClient = useQueryClient();
   const mutation = useMutation({
-    mutationFn: (values: { result: DropResult; boardId: string }) =>
-      axios.patch("/tasks", values),
+    mutationFn: (values: DropResult) => axios.patch("/tasks", values),
     onSuccess: () => {
       queryClient.invalidateQueries(["boards", router.query.id]);
     },
   });
 
   const onDrop = (result: DropResult) => {
-    mutation.mutate({ result, boardId: router.query.id as string });
+    mutation.mutate(result);
   };
 
   return (
@@ -68,10 +67,11 @@ export async function getServerSideProps({
 }: GetServerSidePropsContext) {
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery(["boards"], getBoards);
-  const board = await queryClient.fetchQuery(["boards", params?.id], () =>
-    getBoardById(params?.id as string)
-  );
+  await queryClient.prefetchQuery({ queryKey: ["boards"], queryFn: getBoards });
+  const board = await queryClient.fetchQuery({
+    queryKey: ["boards", params?.id],
+    queryFn: () => getBoardById(params?.id as string),
+  });
 
   if (!board) {
     return {

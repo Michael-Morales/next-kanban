@@ -25,10 +25,11 @@ export async function createTask(
   });
 }
 
-export async function moveTask(
-  { draggableId, source, destination }: DropResult,
-  boardId: string
-) {
+export async function moveTask({
+  draggableId,
+  source,
+  destination,
+}: DropResult) {
   if (destination) {
     if (source.droppableId === destination.droppableId) {
       if (source.index === destination.index) {
@@ -50,9 +51,39 @@ export async function moveTask(
         )
       );
     } else {
-      // move inside another column
+      const [sourceTasks, destinationTasks] = await Promise.all([
+        prisma.task.findMany({
+          where: { columnId: source.droppableId },
+          orderBy: { position: "asc" },
+        }),
+        prisma.task.findMany({
+          where: { columnId: destination.droppableId },
+          orderBy: { position: "asc" },
+        }),
+      ]);
+
+      sourceTasks.splice(source.index, 1);
+
+      const element = await prisma.task.update({
+        where: { id: draggableId },
+        data: {
+          columnId: destination.droppableId,
+        },
+      });
+
+      destinationTasks.splice(destination.index, 0, element);
+
+      await Promise.all(
+        sourceTasks.map((task, i) =>
+          prisma.task.update({ where: { id: task.id }, data: { position: i } })
+        )
+      );
+      await Promise.all(
+        destinationTasks.map((task, i) =>
+          prisma.task.update({ where: { id: task.id }, data: { position: i } })
+        )
+      );
     }
-    return await getBoardById(boardId);
   }
 }
 
@@ -69,9 +100,8 @@ export default async function handler(
         return res.status(201).json({ success: true });
 
       case "PATCH":
-        const { result, boardId } = req.body;
-        const board = await moveTask(result, boardId);
-        return res.status(200).json(board);
+        const board = await moveTask(req.body);
+        return res.status(200).json({ success: true });
 
       default:
         return res
