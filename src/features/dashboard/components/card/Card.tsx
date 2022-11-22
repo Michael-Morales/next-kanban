@@ -1,6 +1,7 @@
 import type { Task, Subtask } from "@prisma/client";
 import { useRef } from "react";
 import { Draggable } from "react-beautiful-dnd";
+import { useIsFetching, useIsMutating } from "@tanstack/react-query";
 
 import { TaskView } from "@features/dashboard";
 import { Modal, IModalHandle } from "@features/ui";
@@ -16,6 +17,8 @@ export function Card({ task, idx }: IProps) {
     .filter(({ isCompleted }) => isCompleted)
     .map(({ id }) => id);
   const modalRef = useRef<IModalHandle>(null);
+  const isFetching = useIsFetching();
+  const isMutating = useIsMutating();
 
   return (
     <>
@@ -25,7 +28,9 @@ export function Card({ task, idx }: IProps) {
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
-            className="group cursor-pointer rounded-lg bg-white px-4 py-6 shadow-lg shadow-shadow"
+            className={`group cursor-pointer rounded-lg bg-white px-4 py-6 shadow-lg shadow-shadow ${
+              isFetching || isMutating ? "pointer-events-none opacity-50" : ""
+            }`}
             onClick={() => modalRef.current?.open()}
           >
             <h3 className="mb-2 font-bold text-black transition-colors group-hover:text-primary">
