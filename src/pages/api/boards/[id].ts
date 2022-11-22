@@ -15,24 +15,6 @@ export async function getBoardById(id: string) {
           id: true,
           boardId: true,
           name: true,
-          tasks: {
-            orderBy: { position: "asc" },
-            select: {
-              id: true,
-              columnId: true,
-              title: true,
-              description: true,
-              subtasks: {
-                orderBy: { createdAt: "asc" },
-                select: {
-                  id: true,
-                  taskId: true,
-                  title: true,
-                  isCompleted: true,
-                },
-              },
-            },
-          },
         },
       },
     },

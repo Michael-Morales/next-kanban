@@ -3,7 +3,27 @@ import type { DropResult } from "react-beautiful-dnd";
 
 import prisma from "@lib/prismadb";
 import { createTaskSchema } from "@lib/validation";
-import { getBoardById } from "@api/boards/[id]";
+
+export async function getTasks() {
+  return await prisma.task.findMany({
+    orderBy: {
+      position: "asc",
+    },
+    include: {
+      subtasks: {
+        orderBy: {
+          createdAt: "asc",
+        },
+        select: {
+          id: true,
+          title: true,
+          isCompleted: true,
+          taskId: true,
+        },
+      },
+    },
+  });
+}
 
 export async function createTask(
   title: string,
@@ -93,6 +113,10 @@ export default async function handler(
 ) {
   try {
     switch (req.method) {
+      case "GET":
+        const tasks = await getTasks();
+        return res.status(200).json(tasks);
+
       case "POST":
         const { title, columnId, subtasks, description, position } =
           createTaskSchema.parse(req.body);
@@ -100,7 +124,6 @@ export default async function handler(
         return res.status(201).json({ success: true });
 
       case "PATCH":
-        const board = await moveTask(req.body);
         return res.status(200).json({ success: true });
 
       default:
