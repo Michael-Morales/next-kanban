@@ -43,7 +43,7 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
     },
   });
   const boardMutation = useMutation({
-    mutationFn: () => axios.delete(`/boards/${board?.id}`),
+    mutationFn: () => axios.delete(`/boards/${router.query.id}`),
     onSuccess: () => {
       queryClient.invalidateQueries(["boards"]);
       deleteModalRef.current?.close();

@@ -6,6 +6,7 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { Plus_Jakarta_Sans } from "@next/font/google";
+import NextNProgress from "nextjs-progressbar";
 
 import "@styles/globals.css";
 
@@ -21,6 +22,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <div className={`${plusJakartaSans.variable} font-sans`}>
+          <NextNProgress color="#635fc7" />
           <Component {...pageProps} />
           <div id="modal" />
         </div>
