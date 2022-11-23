@@ -67,7 +67,7 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
       <MobileNav isOpen={navOpen} />
       <header className="relative z-20 flex items-center justify-between bg-white py-4 px-4 md:px-8">
         <div className="flex items-center gap-x-4 md:gap-x-14">
-          <Link href="/">
+          <Link href="/dashboard" aria-label="home">
             <Image className="md:hidden" src={mobileLogo} alt="" />
             <Image className="hidden md:block" src={desktopLogo} alt="" />
           </Link>
@@ -84,7 +84,12 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
             {board ? board.name : "Select a board"}
           </h1>
         </div>
-        <button className="px-2.5" onClick={handleMenuOpen} disabled={!board}>
+        <button
+          className="px-2.5"
+          onClick={handleMenuOpen}
+          disabled={!board}
+          aria-label="menu"
+        >
           <Image src={ellipsisIcon} alt="" />
         </button>
         {board && <Menu ref={menuRef} board={board} />}

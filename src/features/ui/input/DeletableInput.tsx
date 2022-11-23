@@ -20,8 +20,8 @@ export function DeletableInput({
       <input
         className={`${
           error
-            ? "border-danger hover:border-danger focus:border-danger"
-            : "border-light hover:border-primary focus:border-primary"
+            ? "border-danger focus:border-danger"
+            : "border-light focus:border-primary"
         } flex-1 rounded py-2 px-4 text-sm text-black transition-colors placeholder:text-placeholder focus:ring-0 focus:ring-offset-0`}
         type="text"
         {...register}

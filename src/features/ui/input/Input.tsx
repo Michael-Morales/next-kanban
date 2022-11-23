@@ -25,8 +25,8 @@ export function Input({
         <textarea
           className={`${
             error
-              ? "border-danger hover:border-danger focus:border-danger"
-              : "border-light hover:border-primary focus:border-primary"
+              ? "border-danger focus:border-danger"
+              : "border-light focus:border-primary"
           } h-28 resize-none rounded bg-transparent py-2 px-4 text-sm text-black transition-colors placeholder:text-placeholder focus:ring-0 focus:ring-offset-0`}
           placeholder={placeholder}
           {...register}
@@ -36,8 +36,8 @@ export function Input({
           type={type}
           className={`${
             error
-              ? "border-danger hover:border-danger focus:border-danger"
-              : "border-light hover:border-primary focus:border-primary"
+              ? "border-danger focus:border-danger"
+              : "border-light focus:border-primary"
           } rounded bg-transparent py-2 px-4 text-sm text-black transition-colors placeholder:text-placeholder focus:ring-0 focus:ring-offset-0`}
           placeholder={placeholder}
           {...register}

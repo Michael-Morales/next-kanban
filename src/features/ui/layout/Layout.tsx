@@ -34,6 +34,7 @@ export function Layout({ children }: IProps) {
         <button
           className="fixed bottom-8 z-10 hidden rounded-tr-full rounded-br-full bg-primary p-4 hover:bg-hover-primary md:block"
           onClick={() => setIsOpen(true)}
+          aria-label="open navigation"
         >
           <ShowSidebarIcon className="fill-white" />
         </button>
