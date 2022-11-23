@@ -49,10 +49,7 @@ export async function getServerSideProps({
 
   if (!board) {
     return {
-      redirect: {
-        destination: "/dashboard",
-        permanent: false,
-      },
+      notFound: true,
     };
   }
 
