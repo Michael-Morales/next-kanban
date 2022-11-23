@@ -19,7 +19,8 @@ export function Signup() {
   const { signupMutation } = useAuth(() => router.push("/"));
 
   const onSubmit: SubmitHandler<ISignup> = (values) => {
-    signupMutation.mutate(values);
+    const parsedValues = signupSchema.parse(values);
+    signupMutation.mutate(parsedValues);
   };
 
   const checkErrors = () => {
