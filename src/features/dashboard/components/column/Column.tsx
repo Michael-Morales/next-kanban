@@ -1,10 +1,8 @@
-import type { Column, Task, Subtask } from "@prisma/client";
+import type { Column } from "@prisma/client";
 import { Droppable } from "react-beautiful-dnd";
-import { useQuery } from "@tanstack/react-query";
 
 import { Card } from "../card";
-import { NewTask } from "@features/dashboard";
-import axios from "@lib/axios";
+import { NewTask, useTasks } from "@features/dashboard";
 
 interface IProps {
   column: Column;
@@ -12,14 +10,9 @@ interface IProps {
 
 export function Column({ column }: IProps) {
   const { id, name } = column;
-  const { data: tasks } = useQuery<(Task & { subtasks: Subtask[] })[]>({
-    queryKey: ["tasks", id],
-    queryFn: async () => {
-      const { data } = await axios.get("/tasks", { params: { id } });
-      return data;
-    },
-    refetchOnWindowFocus: false,
-  });
+  const {
+    query: { data: tasks },
+  } = useTasks(id);
 
   return (
     <div className="shrink-0 grow-0 basis-72">

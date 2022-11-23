@@ -1,24 +1,16 @@
-import type { Board } from "@prisma/client";
 import { useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useQuery } from "@tanstack/react-query";
 
 import { BoardIcon, Modal, IModalHandle } from "@features/ui";
-import { CreateBoard } from "@features/dashboard";
-import axios from "@lib/axios";
+import { CreateBoard, useBoards } from "@features/dashboard";
 
 export function Nav() {
   const router = useRouter();
   const modalRef = useRef<IModalHandle>(null);
-  const { data: boards } = useQuery<Board[]>({
-    queryKey: ["boards"],
-    queryFn: async () => {
-      const { data } = await axios.get("/boards");
-      return data;
-    },
-    refetchOnWindowFocus: false,
-  });
+  const {
+    query: { data: boards },
+  } = useBoards();
 
   return (
     <>

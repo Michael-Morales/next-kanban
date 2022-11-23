@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Input, DeletableInput, Button } from "@features/ui";
 import { createBoardSchema, ICreateBoard } from "@lib/validation";
 import axios from "@lib/axios";
+import { useBoards } from "@features/dashboard";
 
 interface IProps {
   onClose: () => void;
@@ -29,17 +30,14 @@ export function CreateBoard({ onClose }: IProps) {
     control,
     name: "columns",
   });
-  const mutation = useMutation({
-    mutationFn: (values: ICreateBoard) => axios.post("/boards", values),
-    onSuccess: ({ data }) => {
-      onClose();
-      router.push(`/dashboard/${data.boardId}`);
-    },
+  const { createMutation } = useBoards((id) => {
+    onClose();
+    router.push(`/dashboard/${id}`);
   });
 
   const onSubmit: SubmitHandler<ICreateBoard> = async (values) => {
     const parsedValues = createBoardSchema.parse(values);
-    mutation.mutate(parsedValues);
+    createMutation.mutate(parsedValues);
   };
 
   const checkErrors = () => {
@@ -47,7 +45,7 @@ export function CreateBoard({ onClose }: IProps) {
       !(dirtyFields.name && !!dirtyFields.columns?.some(({ name }) => name)) ||
       !!errors.name ||
       !!errors.columns ||
-      mutation.isLoading
+      createMutation.isLoading
     );
   };
 
@@ -84,7 +82,7 @@ export function CreateBoard({ onClose }: IProps) {
       <Button
         type="submit"
         disabled={checkErrors()}
-        loading={mutation.isLoading}
+        loading={createMutation.isLoading}
       >
         create new board
       </Button>

@@ -1,11 +1,10 @@
 import type { Task, Subtask } from "@prisma/client";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Input, Button, DeletableInput } from "@features/ui";
 import { updateTaskSchema, IUpdateTask } from "@lib/validation";
-import axios from "@lib/axios";
+import { useTask } from "@features/dashboard";
 
 interface IProps {
   onClose: () => void;
@@ -36,23 +35,19 @@ export function EditTask({ onClose, task }: IProps) {
     control,
     name: "subtasks",
   });
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: (values: IUpdateTask) => axios.patch(`/tasks/${id}`, values),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["tasks", columnId]);
-      onClose();
-    },
-  });
+  const { updateMutation } = useTask(id, columnId, onClose);
 
   const onSubmit: SubmitHandler<IUpdateTask> = async (values) => {
     const parsedValues = updateTaskSchema.parse(values);
-    mutation.mutate(parsedValues);
+    updateMutation.mutate(parsedValues);
   };
 
   const checkErrors = () => {
     return (
-      !isDirty || !!errors.title || !!errors.subtasks || mutation.isLoading
+      !isDirty ||
+      !!errors.title ||
+      !!errors.subtasks ||
+      updateMutation.isLoading
     );
   };
 
@@ -95,7 +90,7 @@ export function EditTask({ onClose, task }: IProps) {
       <Button
         type="submit"
         disabled={checkErrors()}
-        loading={mutation.isLoading}
+        loading={updateMutation.isLoading}
       >
         save changes
       </Button>

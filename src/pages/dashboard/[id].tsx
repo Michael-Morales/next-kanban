@@ -1,18 +1,6 @@
 import type { GetServerSidePropsContext } from "next";
-import type {
-  Board,
-  Column as ColumnType,
-  Subtask,
-  Task,
-} from "@prisma/client";
 import type { DropResult } from "react-beautiful-dnd";
-import {
-  QueryClient,
-  dehydrate,
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { DragDropContext } from "react-beautiful-dnd";
 
@@ -21,94 +9,17 @@ import { Column, NewColumn } from "@features/dashboard";
 import { getBoards } from "@api/boards";
 import { getBoardById } from "@api/boards/[id]";
 import { getTasksByColumnId } from "@api/tasks";
-import axios from "@lib/axios";
+import { useBoard, useTasks } from "@features/dashboard";
 
 export default function Board() {
   const router = useRouter();
-  const { data: board } = useQuery<
-    Board & {
-      columns: ColumnType[];
-    }
-  >({
-    queryKey: ["boards", router.query.id],
-    queryFn: async () => {
-      const { data } = await axios.get(`/boards/${router.query.id}`);
-      return data;
-    },
-    refetchOnWindowFocus: false,
-  });
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: (values: DropResult) => axios.patch("/tasks", values),
-    onMutate: async ({ source, destination }) => {
-      await queryClient.cancelQueries({ queryKey: ["tasks"] });
-      const sourceTasks = queryClient.getQueryData<
-        (Task & { subtasks: Subtask[] })[]
-      >(["tasks", source.droppableId]);
-
-      if (!destination) {
-        return;
-      }
-
-      if (sourceTasks) {
-        if (source.droppableId === destination.droppableId) {
-          if (source.index === destination.index) {
-            return;
-          }
-          const sourceCopy = [...sourceTasks];
-          const element = sourceCopy[source.index];
-          sourceCopy.splice(source.index, 1);
-          sourceCopy.splice(destination.index, 0, element);
-          const updatedTasksPositions = sourceCopy.map((task, i) => ({
-            ...task,
-            position: i,
-          }));
-          queryClient.setQueryData(
-            ["tasks", source.droppableId],
-            updatedTasksPositions
-          );
-        } else {
-          const destinationTasks = queryClient.getQueryData<
-            (Task & { subtasks: Subtask[] })[]
-          >(["tasks", destination.droppableId]);
-          const sourceCopy = [...sourceTasks];
-          const element = sourceCopy[source.index];
-          element.columnId = destination.droppableId;
-          sourceCopy.splice(source.index, 1);
-          destinationTasks?.splice(destination.index, 0, element);
-          const updatedSourcePositions = sourceCopy.map((task, i) => ({
-            ...task,
-            position: i,
-          }));
-          const updatedDestinationPositions = destinationTasks?.map(
-            (task, i) => ({ ...task, position: i })
-          );
-          queryClient.setQueryData(
-            ["tasks", source.droppableId],
-            updatedSourcePositions
-          );
-          queryClient.setQueryData(
-            ["tasks", destination.droppableId],
-            updatedDestinationPositions
-          );
-        }
-      }
-
-      return { sourceTasks };
-    },
-    onError: (_, { source }, context) => {
-      queryClient.setQueryData(
-        ["tasks", source.droppableId],
-        context?.sourceTasks
-      );
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks"] });
-    },
-  });
+  const {
+    query: { data: board },
+  } = useBoard(router.query.id as string);
+  const { moveMutation } = useTasks();
 
   const onDrop = (result: DropResult) => {
-    mutation.mutate(result);
+    moveMutation.mutate(result);
   };
 
   return (
