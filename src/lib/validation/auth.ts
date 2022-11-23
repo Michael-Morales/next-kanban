@@ -14,7 +14,7 @@ export const signupSchema = signinSchema
       .min(6, { message: "Must be at least 6 characters long" }),
   })
   .refine(({ password, confirmPassword }) => password === confirmPassword, {
-    message: "Password doesn't match",
+    message: "Passwords don't match",
     path: ["confirmPassword"],
   });
 

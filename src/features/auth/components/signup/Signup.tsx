@@ -1,11 +1,14 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input, Button } from "@features/ui";
 import { ISignup, signupSchema } from "@lib/validation";
+import { useAuth } from "@features/auth";
 
 export function Signup() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -13,9 +16,10 @@ export function Signup() {
   } = useForm<ISignup>({
     resolver: zodResolver(signupSchema),
   });
+  const { signupMutation } = useAuth(() => router.push("/"));
 
   const onSubmit: SubmitHandler<ISignup> = (values) => {
-    console.log(values);
+    signupMutation.mutate(values);
   };
 
   const checkErrors = () => {
@@ -23,7 +27,8 @@ export function Signup() {
       !!errors.email ||
       !!errors.password ||
       !!errors.confirmPassword ||
-      !isDirty
+      !isDirty ||
+      signupMutation.isLoading
     );
   };
 

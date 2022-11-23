@@ -3,8 +3,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@lib/prismadb";
 import { createBoardSchema } from "@lib/validation";
 
-export async function getBoards() {
+export async function getBoards(userId: string) {
   return await prisma.board.findMany({
+    where: {
+      userId,
+    },
     orderBy: {
       createdAt: "asc",
     },
@@ -15,13 +18,18 @@ export async function getBoards() {
   });
 }
 
-export async function createBoard(name: string, columns: { name: string }[]) {
+export async function createBoard(
+  name: string,
+  columns: { name: string }[],
+  userId: string
+) {
   return await prisma.board.create({
     data: {
       name,
       columns: {
         createMany: { data: columns },
       },
+      userId,
     },
   });
 }
@@ -31,14 +39,16 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
+    const { userId } = req.query;
+
     switch (req.method) {
       case "GET":
-        const boards = await getBoards();
+        const boards = await getBoards(userId as string);
         return res.status(200).json(boards);
 
       case "POST":
         const { name, columns } = createBoardSchema.parse(req.body);
-        const { id } = await createBoard(name, columns);
+        const { id } = await createBoard(name, columns, userId as string);
         return res.status(201).json({ success: true, boardId: id });
 
       default:
