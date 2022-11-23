@@ -7,11 +7,9 @@ import {
   useRef,
 } from "react";
 import { useRouter } from "next/router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Modal, IModalHandle, DeleteModal } from "@features/ui";
-import { EditTask, EditBoard } from "@features/dashboard";
-import axios from "@lib/axios";
+import { EditTask, EditBoard, useBoard, useTask } from "@features/dashboard";
 
 interface IProps {
   task?: Task & { subtasks: Subtask[] };
@@ -34,22 +32,20 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
   const editModalRef = useRef<IModalHandle>(null);
   const deleteModalRef = useRef<IModalHandle>(null);
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const taskMutation = useMutation({
-    mutationFn: () => axios.delete(`/tasks/${task?.id}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["boards"]);
+  const { deleteMutation: taskMutation } = useTask(
+    task?.id,
+    task?.columnId,
+    () => {
       closeRootModal && closeRootModal();
-    },
-  });
-  const boardMutation = useMutation({
-    mutationFn: () => axios.delete(`/boards/${board?.id}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["boards"]);
+    }
+  );
+  const { deleteMutation: boardMutation } = useBoard(
+    router.query.id as string,
+    () => {
       deleteModalRef.current?.close();
       router.push("/dashboard");
-    },
-  });
+    }
+  );
 
   const title = task ? "task" : "board";
 

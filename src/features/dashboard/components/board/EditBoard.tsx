@@ -2,11 +2,10 @@ import type { Board, Column } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Input, DeletableInput, Button } from "@features/ui";
 import { updateBoardSchema, IUpdateBoard } from "@lib/validation";
-import axios from "@lib/axios";
+import { useBoard } from "@features/dashboard";
 
 interface IProps {
   onClose: () => void;
@@ -29,23 +28,17 @@ export function EditBoard({ onClose, board }: IProps) {
     control,
     name: "columns",
   });
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: (values: IUpdateBoard) =>
-      axios.patch(`/boards/${router.query.id}`, values),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["boards"]);
-      onClose();
-    },
-  });
+  const { updateMutation } = useBoard(router.query.id as string, onClose);
 
   const onSubmit: SubmitHandler<IUpdateBoard> = async (values) => {
     const parsedValues = updateBoardSchema.parse(values);
-    mutation.mutate(parsedValues);
+    updateMutation.mutate(parsedValues);
   };
 
   const checkErrors = () => {
-    return !isDirty || !!errors.name || !!errors.columns || mutation.isLoading;
+    return (
+      !isDirty || !!errors.name || !!errors.columns || updateMutation.isLoading
+    );
   };
 
   return (
@@ -83,7 +76,7 @@ export function EditBoard({ onClose, board }: IProps) {
       <Button
         type="submit"
         disabled={checkErrors()}
-        loading={mutation.isLoading}
+        loading={updateMutation.isLoading}
       >
         save changes
       </Button>

@@ -1,11 +1,10 @@
 import type { Subtask } from "@prisma/client";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Checkbox, Button } from "@features/ui";
 import { toggleSubtaskSchema, IToggleSubtask } from "@lib/validation";
-import axios from "@lib/axios";
+import { useSubtasks } from "@features/dashboard";
 
 interface IProps {
   description: string | null;
@@ -30,13 +29,7 @@ export function TaskView({
     defaultValues: { taskId, subtasks: completedSubtasks },
     resolver: zodResolver(toggleSubtaskSchema),
   });
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: (values: IToggleSubtask) => axios.patch("/subtasks", values),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["boards"]);
-    },
-  });
+  const { toggleMutation } = useSubtasks();
 
   const sortedSubtasks = [...subtasks].sort(
     (a, b) => +b.isCompleted - +a.isCompleted
@@ -45,7 +38,7 @@ export function TaskView({
   const onSubmit: SubmitHandler<IToggleSubtask> = async (values) => {
     if (isDirty) {
       const parsedValues = toggleSubtaskSchema.parse(values);
-      mutation.mutate(parsedValues);
+      toggleMutation.mutate(parsedValues);
     }
 
     onClose();
@@ -75,8 +68,8 @@ export function TaskView({
         <div className="flex flex-col gap-y-4">
           <Button
             type="submit"
-            disabled={mutation.isLoading}
-            loading={mutation.isLoading}
+            disabled={toggleMutation.isLoading}
+            loading={toggleMutation.isLoading}
           >
             confirm
           </Button>

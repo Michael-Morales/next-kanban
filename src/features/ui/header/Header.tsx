@@ -1,4 +1,3 @@
-import type { Board, Column } from "@prisma/client";
 import {
   useState,
   useImperativeHandle,
@@ -9,10 +8,9 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useQuery } from "@tanstack/react-query";
 
 import { MobileNav, Menu, IMenuHandle, Overlay } from "@features/ui";
-import axios from "@lib/axios";
+import { useBoard } from "@features/dashboard";
 
 import mobileLogo from "@images/logo-mobile.svg";
 import desktopLogo from "@images/logo-dark.svg";
@@ -27,14 +25,9 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
   const router = useRouter();
   const [navOpen, setNavOpen] = useState(false);
   const menuRef = useRef<IMenuHandle>(null);
-  const { data: board } = useQuery<Board & { columns: Column[] }>({
-    queryKey: ["boards", router.query.id],
-    queryFn: async () => {
-      const { data } = await axios.get(`/boards/${router.query.id}`);
-      return data;
-    },
-    refetchOnWindowFocus: false,
-  });
+  const {
+    query: { data: board },
+  } = useBoard(router.query.id as string);
 
   const handleOpenNav = () => {
     if (menuRef.current?.isOpen) menuRef.current?.close();

@@ -7,8 +7,16 @@ import { updateBoardSchema } from "@lib/validation";
 export async function getBoardById(id: string) {
   const res = await prisma.board.findUnique({
     where: { id },
-    include: {
-      columns: { include: { tasks: { include: { subtasks: true } } } },
+    select: {
+      name: true,
+      columns: {
+        orderBy: { createdAt: "asc" },
+        select: {
+          id: true,
+          boardId: true,
+          name: true,
+        },
+      },
     },
   });
 
@@ -26,7 +34,7 @@ export async function deleteBoard(id: string) {
 export async function updateBoard(
   id: string,
   name: string,
-  columns: Omit<Column, "boardId">[]
+  columns: Omit<Column, "boardId" | "createdAt">[]
 ) {
   await prisma.board.update({
     where: { id },

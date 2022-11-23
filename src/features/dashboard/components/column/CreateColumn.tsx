@@ -1,11 +1,10 @@
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Button, Input } from "@features/ui";
 import { createColumnSchema, ICreateColumn } from "@lib/validation";
-import axios from "@lib/axios";
+import { useColumns } from "@features/dashboard";
 
 interface IProps {
   onClose: () => void;
@@ -25,22 +24,15 @@ export function CreateColumn({ onClose }: IProps) {
     },
     resolver: zodResolver(createColumnSchema),
   });
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: (values: ICreateColumn) => axios.post("/columns", values),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["boards"] });
-      onClose();
-    },
-  });
+  const { createMutation } = useColumns(onClose);
 
   const onSubmit: SubmitHandler<ICreateColumn> = async (values) => {
     const parsedValues = createColumnSchema.parse(values);
-    mutation.mutate(parsedValues);
+    createMutation.mutate(parsedValues);
   };
 
   const checkErrors = () => {
-    return !isDirty || !!errors.name || mutation.isLoading;
+    return !isDirty || !!errors.name || createMutation.isLoading;
   };
 
   return (
@@ -54,7 +46,7 @@ export function CreateColumn({ onClose }: IProps) {
       <Button
         type="submit"
         disabled={checkErrors()}
-        loading={mutation.isLoading}
+        loading={createMutation.isLoading}
       >
         create column
       </Button>

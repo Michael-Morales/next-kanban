@@ -12,7 +12,7 @@ export async function updateTask(
   id: string,
   title: string,
   description: string | null,
-  subtasks: Omit<Subtask, "taskId">[]
+  subtasks: Omit<Subtask, "taskId" | "createdAt">[]
 ) {
   await prisma.task.update({
     where: { id },

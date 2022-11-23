@@ -25,7 +25,7 @@ export function Layout({ children }: IProps) {
       <div className="flex" onClick={() => headerRef.current?.closeMenu()}>
         <DesktopNav isOpen={isOpen} onClose={() => setIsOpen(false)} />
         <main
-          className={`h-[calc(100vh-60px)] w-full overflow-auto transition-[margin-left] md:h-[calc(100vh-68px)] ${
+          className={`relative h-[calc(100vh-60px)] w-full overflow-auto transition-[margin-left] md:h-[calc(100vh-64px)] ${
             isOpen ? "ml-72" : "ml-0"
           }`}
         >

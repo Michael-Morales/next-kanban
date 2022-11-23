@@ -1,27 +1,28 @@
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { Input, Button, DeletableInput } from "@features/ui";
 import { createTaskSchema, ICreateTask } from "@lib/validation";
-import axios from "@lib/axios";
+import { useTasks } from "@features/dashboard";
 
 interface IProps {
   onClose: () => void;
   columnId: string;
+  newIdx: number;
 }
 
-export function CreateTask({ onClose, columnId }: IProps) {
+export function CreateTask({ onClose, columnId, newIdx }: IProps) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty, dirtyFields },
+    formState: { errors, dirtyFields },
     control,
   } = useForm<ICreateTask>({
     defaultValues: {
       title: "",
       description: "",
       columnId,
+      position: newIdx,
       subtasks: [{ title: "", isCompleted: false }],
     },
     resolver: zodResolver(createTaskSchema),
@@ -30,18 +31,11 @@ export function CreateTask({ onClose, columnId }: IProps) {
     control,
     name: "subtasks",
   });
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: (values: ICreateTask) => axios.post("/tasks", values),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["boards"]);
-      onClose();
-    },
-  });
+  const { createMutation } = useTasks(columnId, onClose);
 
   const onSubmit: SubmitHandler<ICreateTask> = async (values) => {
     const parsedValues = createTaskSchema.parse(values);
-    mutation.mutate(parsedValues);
+    createMutation.mutate(parsedValues);
   };
 
   const checkErrors = () => {
@@ -51,7 +45,7 @@ export function CreateTask({ onClose, columnId }: IProps) {
       ) ||
       !!errors.title ||
       !!errors.subtasks ||
-      mutation.isLoading
+      createMutation.isLoading
     );
   };
 
@@ -94,7 +88,7 @@ export function CreateTask({ onClose, columnId }: IProps) {
       <Button
         type="submit"
         disabled={checkErrors()}
-        loading={mutation.isLoading}
+        loading={createMutation.isLoading}
       >
         create task
       </Button>
