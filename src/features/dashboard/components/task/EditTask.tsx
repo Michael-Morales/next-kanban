@@ -13,7 +13,7 @@ interface IProps {
 }
 
 export function EditTask({ onClose, task }: IProps) {
-  const { id, title, description, subtasks } = task;
+  const { id, title, description, subtasks, columnId } = task;
   const mappedSubtasks = subtasks.map(({ id, title, isCompleted }) => ({
     id,
     title,
@@ -40,7 +40,7 @@ export function EditTask({ onClose, task }: IProps) {
   const mutation = useMutation({
     mutationFn: (values: IUpdateTask) => axios.patch(`/tasks/${id}`, values),
     onSuccess: () => {
-      queryClient.invalidateQueries(["boards"]);
+      queryClient.invalidateQueries(["tasks", columnId]);
       onClose();
     },
   });

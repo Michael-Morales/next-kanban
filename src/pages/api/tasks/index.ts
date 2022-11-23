@@ -4,8 +4,9 @@ import type { DropResult } from "react-beautiful-dnd";
 import prisma from "@lib/prismadb";
 import { createTaskSchema } from "@lib/validation";
 
-export async function getTasks() {
+export async function getTasksByColumnId(id: string) {
   return await prisma.task.findMany({
+    where: { columnId: id },
     orderBy: {
       position: "asc",
     },
@@ -50,60 +51,62 @@ export async function moveTask({
   source,
   destination,
 }: DropResult) {
-  if (destination) {
-    if (source.droppableId === destination.droppableId) {
-      if (source.index === destination.index) {
-        return;
-      }
+  if (!destination) {
+    return;
+  }
 
-      const tasks = await prisma.task.findMany({
+  if (source.droppableId === destination.droppableId) {
+    if (source.index === destination.index) {
+      return;
+    }
+
+    const tasks = await prisma.task.findMany({
+      where: { columnId: destination.droppableId },
+      orderBy: { position: "asc" },
+    });
+
+    const element = tasks[source.index];
+    tasks.splice(source.index, 1);
+    tasks.splice(destination.index, 0, element);
+
+    await Promise.all(
+      tasks.map((task, i) =>
+        prisma.task.update({ where: { id: task.id }, data: { position: i } })
+      )
+    );
+  } else {
+    const [sourceTasks, destinationTasks] = await Promise.all([
+      prisma.task.findMany({
+        where: { columnId: source.droppableId },
+        orderBy: { position: "asc" },
+      }),
+      prisma.task.findMany({
         where: { columnId: destination.droppableId },
         orderBy: { position: "asc" },
-      });
+      }),
+    ]);
 
-      const element = tasks[source.index];
-      tasks.splice(source.index, 1);
-      tasks.splice(destination.index, 0, element);
+    sourceTasks.splice(source.index, 1);
 
-      await Promise.all(
-        tasks.map((task, i) =>
-          prisma.task.update({ where: { id: task.id }, data: { position: i } })
-        )
-      );
-    } else {
-      const [sourceTasks, destinationTasks] = await Promise.all([
-        prisma.task.findMany({
-          where: { columnId: source.droppableId },
-          orderBy: { position: "asc" },
-        }),
-        prisma.task.findMany({
-          where: { columnId: destination.droppableId },
-          orderBy: { position: "asc" },
-        }),
-      ]);
+    const element = await prisma.task.update({
+      where: { id: draggableId },
+      data: {
+        columnId: destination.droppableId,
+      },
+    });
 
-      sourceTasks.splice(source.index, 1);
+    destinationTasks.splice(destination.index, 0, element);
 
-      const element = await prisma.task.update({
-        where: { id: draggableId },
-        data: {
-          columnId: destination.droppableId,
-        },
-      });
-
-      destinationTasks.splice(destination.index, 0, element);
-
-      await Promise.all(
-        sourceTasks.map((task, i) =>
-          prisma.task.update({ where: { id: task.id }, data: { position: i } })
-        )
-      );
-      await Promise.all(
-        destinationTasks.map((task, i) =>
-          prisma.task.update({ where: { id: task.id }, data: { position: i } })
-        )
-      );
-    }
+    await Promise.all(
+      sourceTasks.map((task, i) =>
+        prisma.task.update({ where: { id: task.id }, data: { position: i } })
+      )
+    );
+    await Promise.all(
+      destinationTasks.map((task, i) =>
+        prisma.task.update({ where: { id: task.id }, data: { position: i } })
+      )
+    );
   }
 }
 
@@ -114,7 +117,8 @@ export default async function handler(
   try {
     switch (req.method) {
       case "GET":
-        const tasks = await getTasks();
+        const { id } = req.query;
+        const tasks = await getTasksByColumnId(id as string);
         return res.status(200).json(tasks);
 
       case "POST":
@@ -124,6 +128,7 @@ export default async function handler(
         return res.status(201).json({ success: true });
 
       case "PATCH":
+        await moveTask(req.body);
         return res.status(200).json({ success: true });
 
       default:

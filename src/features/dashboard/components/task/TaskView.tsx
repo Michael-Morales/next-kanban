@@ -34,7 +34,7 @@ export function TaskView({
   const mutation = useMutation({
     mutationFn: (values: IToggleSubtask) => axios.patch("/subtasks", values),
     onSuccess: () => {
-      queryClient.invalidateQueries(["boards"]);
+      queryClient.invalidateQueries(["tasks"]);
     },
   });
 

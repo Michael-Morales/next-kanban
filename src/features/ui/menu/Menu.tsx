@@ -38,7 +38,7 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
   const taskMutation = useMutation({
     mutationFn: () => axios.delete(`/tasks/${task?.id}`),
     onSuccess: () => {
-      queryClient.invalidateQueries(["boards"]);
+      queryClient.invalidateQueries(["tasks", task?.columnId]);
       closeRootModal && closeRootModal();
     },
   });

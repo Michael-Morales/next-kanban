@@ -36,7 +36,7 @@ export function CreateTask({ onClose, columnId, newIdx }: IProps) {
   const mutation = useMutation({
     mutationFn: (values: ICreateTask) => axios.post("/tasks", values),
     onSuccess: () => {
-      queryClient.invalidateQueries(["boards"]);
+      queryClient.invalidateQueries(["tasks", columnId]);
       onClose();
     },
   });

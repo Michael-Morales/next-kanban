@@ -2,11 +2,10 @@ import type { GetServerSidePropsContext } from "next";
 import type {
   Board,
   Column as ColumnType,
-  Task,
   Subtask,
+  Task,
 } from "@prisma/client";
 import type { DropResult } from "react-beautiful-dnd";
-import { useState, useEffect } from "react";
 import {
   QueryClient,
   dehydrate,
@@ -21,7 +20,7 @@ import { Layout } from "@features/ui";
 import { Column, NewColumn } from "@features/dashboard";
 import { getBoards } from "@api/boards";
 import { getBoardById } from "@api/boards/[id]";
-import { getTasks } from "@api/tasks";
+import { getTasksByColumnId } from "@api/tasks";
 import axios from "@lib/axios";
 
 export default function Board() {
@@ -38,49 +37,86 @@ export default function Board() {
     },
     refetchOnWindowFocus: false,
   });
-  const { data: tasks, isSuccess } = useQuery<
-    (Task & { subtasks: Subtask[] })[]
-  >({
-    queryKey: ["tasks"],
-    queryFn: async () => {
-      const { data } = await axios.get("/tasks");
-      return data;
-    },
-    enabled: !!board,
-  });
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: (values: DropResult) => axios.patch("/tasks", values),
-    onSuccess: () => {
-      queryClient.invalidateQueries(["tasks"]);
+    onMutate: async ({ source, destination }) => {
+      await queryClient.cancelQueries({ queryKey: ["tasks"] });
+      const sourceTasks = queryClient.getQueryData<
+        (Task & { subtasks: Subtask[] })[]
+      >(["tasks", source.droppableId]);
+
+      if (!destination) {
+        return;
+      }
+
+      if (sourceTasks) {
+        if (source.droppableId === destination.droppableId) {
+          if (source.index === destination.index) {
+            return;
+          }
+          const sourceCopy = [...sourceTasks];
+          const element = sourceCopy[source.index];
+          sourceCopy.splice(source.index, 1);
+          sourceCopy.splice(destination.index, 0, element);
+          const updatedTasksPositions = sourceCopy.map((task, i) => ({
+            ...task,
+            position: i,
+          }));
+          queryClient.setQueryData(
+            ["tasks", source.droppableId],
+            updatedTasksPositions
+          );
+        } else {
+          const destinationTasks = queryClient.getQueryData<
+            (Task & { subtasks: Subtask[] })[]
+          >(["tasks", destination.droppableId]);
+          const sourceCopy = [...sourceTasks];
+          const element = sourceCopy[source.index];
+          element.columnId = destination.droppableId;
+          sourceCopy.splice(source.index, 1);
+          destinationTasks?.splice(destination.index, 0, element);
+          const updatedSourcePositions = sourceCopy.map((task, i) => ({
+            ...task,
+            position: i,
+          }));
+          const updatedDestinationPositions = destinationTasks?.map(
+            (task, i) => ({ ...task, position: i })
+          );
+          queryClient.setQueryData(
+            ["tasks", source.droppableId],
+            updatedSourcePositions
+          );
+          queryClient.setQueryData(
+            ["tasks", destination.droppableId],
+            updatedDestinationPositions
+          );
+        }
+      }
+
+      return { sourceTasks };
+    },
+    onError: (_, { source }, context) => {
+      queryClient.setQueryData(
+        ["tasks", source.droppableId],
+        context?.sourceTasks
+      );
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
-  const [tasksState, setTasksState] = useState<
-    (Task & { subtasks: Subtask[] })[]
-  >([]);
 
   const onDrop = (result: DropResult) => {
     mutation.mutate(result);
   };
-
-  useEffect(() => {
-    if (isSuccess) {
-      setTasksState(tasks);
-    }
-  }, [isSuccess, tasks]);
 
   return (
     <Layout>
       <DragDropContext onDragEnd={onDrop}>
         <div className="flex min-h-full gap-x-6 px-4 py-6 md:px-6">
           {board?.columns.map((column) => (
-            <Column
-              key={column.id}
-              column={column}
-              tasks={tasksState.filter(
-                ({ columnId }) => columnId === column.id
-              )}
-            />
+            <Column key={column.id} column={column} />
           ))}
           <NewColumn />
         </div>
@@ -95,7 +131,6 @@ export async function getServerSideProps({
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({ queryKey: ["boards"], queryFn: getBoards });
-  await queryClient.prefetchQuery({ queryKey: ["tasks"], queryFn: getTasks });
   const board = await queryClient.fetchQuery({
     queryKey: ["boards", params?.id],
     queryFn: () => getBoardById(params?.id as string),
@@ -109,6 +144,15 @@ export async function getServerSideProps({
       },
     };
   }
+
+  await Promise.all(
+    board.columns.map(({ id }) =>
+      queryClient.prefetchQuery({
+        queryKey: ["tasks", id],
+        queryFn: () => getTasksByColumnId(id),
+      })
+    )
+  );
 
   return {
     props: {

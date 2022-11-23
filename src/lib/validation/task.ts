@@ -14,7 +14,7 @@ export const updateTaskSchema = createTaskSchema
   .extend({
     subtasks: z.array(updateSubtaskSchema),
   })
-  .omit({ columnId: true });
+  .omit({ columnId: true, position: true });
 
 export type ICreateTask = z.infer<typeof createTaskSchema>;
 export type IUpdateTask = z.infer<typeof updateTaskSchema>;
