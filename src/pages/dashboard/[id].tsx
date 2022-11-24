@@ -24,11 +24,13 @@ export default function Board() {
     moveMutation.mutate(result);
   };
 
+  if (!board) return null;
+
   return (
     <Layout>
       <DragDropContext onDragEnd={onDrop}>
         <div className="flex min-h-full gap-x-6 px-4 py-6 md:px-6">
-          {board?.columns.map((column) => (
+          {board.columns.map((column) => (
             <Column key={column.id} column={column} />
           ))}
           <NewColumn />

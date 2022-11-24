@@ -103,37 +103,44 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
           </Button>
         )}
       </div>
-      <Modal ref={editModalRef} title={`Edit ${title}`}>
+      {task && (
         <>
-          {task && <EditTask onClose={closeRootModal!} task={task} />}
-          {!task && board && (
-            <EditBoard
-              onClose={() => editModalRef.current?.close()}
-              board={board}
-            />
-          )}
-        </>
-      </Modal>
-      <Modal ref={deleteModalRef} title={`Delete this ${title}`} type="delete">
-        <>
-          {task && (
+          <Modal ref={editModalRef} title={`Edit ${title}`}>
+            <EditTask onClose={closeRootModal!} task={task} />
+          </Modal>
+          <Modal
+            ref={deleteModalRef}
+            title={`Delete this ${title}`}
+            type="delete"
+          >
             <DeleteModal
               content={`Are you sure you want to delete the ‘${task.title}’ task and its subtasks? This action cannot be reversed.`}
               onDelete={handleDelete}
               onClose={() => deleteModalRef.current?.close()}
               loading={taskMutation.isLoading}
             />
-          )}
-          {!task && board && (
+          </Modal>
+        </>
+      )}
+      {!task && board && (
+        <>
+          <Modal ref={editModalRef} title={`Edit ${title}`}>
+            <EditBoard onClose={closeRootModal!} board={board} />
+          </Modal>
+          <Modal
+            ref={deleteModalRef}
+            title={`Delete this ${title}`}
+            type="delete"
+          >
             <DeleteModal
               content={`Are you sure you want to delete the ‘${board.name}’ board? This action will remove all columns and tasks and cannot be reversed.`}
               onDelete={handleDelete}
               onClose={() => deleteModalRef.current?.close()}
               loading={boardMutation.isLoading}
             />
-          )}
+          </Modal>
         </>
-      </Modal>
+      )}
     </>
   );
 });
