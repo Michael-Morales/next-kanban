@@ -21,8 +21,8 @@ export function DeletableInput({
         className={`${
           error
             ? "border-danger focus:border-danger"
-            : "border-light focus:border-primary"
-        } flex-1 rounded py-2 px-4 text-sm text-black transition-colors placeholder:text-placeholder focus:ring-0 focus:ring-offset-0`}
+            : "border-placeholder focus:border-primary"
+        } flex-1 rounded bg-transparent py-2 px-4 text-sm text-black transition-colors placeholder:text-placeholder focus:ring-0 focus:ring-offset-0 dark:text-white`}
         type="text"
         {...register}
         placeholder={placeholder}

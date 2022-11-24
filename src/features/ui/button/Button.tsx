@@ -12,9 +12,11 @@ interface IProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const styles: {
   [key: string]: string;
 } = {
-  primary: "bg-primary text-white hover:bg-hover-primary",
-  secondary: "bg-secondary text-primary hover:bg-hover-secondary",
-  danger: "bg-danger text-white hover:bg-hover-danger",
+  primary:
+    "bg-primary text-white hover:bg-hover-primary disabled:bg-secondary disabled:text-white dark:disabled:bg-theme-dark-primary dark:disabled:text-body",
+  secondary:
+    "bg-secondary text-primary hover:bg-hover-secondary dark:bg-white dark:hover:bg-hover-secondary",
+  danger: "bg-danger text-white hover:bg-hover-danger disabled:bg-hover-danger",
   standard: "py-4 px-5 text-base",
   small: "py-2 px-4 text-sm",
 };
@@ -30,7 +32,7 @@ export function Button({
 }: IProps) {
   return (
     <button
-      className={`flex flex-1 justify-center rounded-full font-bold capitalize transition-colors disabled:bg-secondary disabled:text-white ${styles[buttonStyle]} ${styles[size]}`}
+      className={`flex flex-1 justify-center rounded-full font-bold capitalize transition-colors ${styles[buttonStyle]} ${styles[size]}`}
       type={type}
       disabled={disabled}
       onClick={onClick}

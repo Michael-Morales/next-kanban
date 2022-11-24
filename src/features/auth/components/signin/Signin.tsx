@@ -29,12 +29,14 @@ export function Signin() {
   };
 
   return (
-    <div className="w-full max-w-md rounded-lg bg-white px-4 py-6 shadow-lg shadow-shadow">
+    <div className="w-full max-w-md rounded-lg bg-white px-4 py-6 shadow-lg shadow-shadow dark:bg-theme-dark">
       <form
         className="mb-4 flex flex-col gap-y-6"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <h1 className="text-2xl font-bold capitalize text-black">sign in</h1>
+        <h1 className="text-2xl font-bold capitalize text-black dark:text-white">
+          sign in
+        </h1>
         <Input
           label="email"
           type="email"

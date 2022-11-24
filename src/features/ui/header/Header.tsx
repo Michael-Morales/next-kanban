@@ -6,7 +6,6 @@ import {
   useRef,
 } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/router";
 
 import {
@@ -17,11 +16,9 @@ import {
   MobileLogo,
   DesktopLogo,
   EllipsisIcon,
+  ChevronIcon,
 } from "@features/ui";
 import { useBoard } from "@features/dashboard";
-
-import chevronUpIcon from "@images/icon-chevron-up.svg";
-import chevronDownIcon from "@images/icon-chevron-down.svg";
 
 export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
   _,
@@ -70,9 +67,13 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
     <>
       <Overlay show={navOpen} onDismiss={() => setNavOpen(false)} />
       <MobileNav isOpen={navOpen} />
-      <header className="relative z-20 flex items-center justify-between bg-white py-4 px-4 md:px-8">
+      <header className="relative z-20 flex items-center justify-between bg-white py-4 px-4 dark:bg-theme-dark md:px-8">
         <div className="flex items-center gap-x-4 md:gap-x-14">
-          <Link href="/dashboard" aria-label="home" className="text-black">
+          <Link
+            href="/dashboard"
+            aria-label="home"
+            className="text-black dark:text-white"
+          >
             <MobileLogo className="md:hidden" />
             <DesktopLogo className="hidden md:block" />
           </Link>
@@ -80,12 +81,14 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
             className="flex items-center gap-x-2 md:hidden"
             onClick={handleOpenNav}
           >
-            <h1 className="text-lg font-bold capitalize text-black">
+            <h1 className="text-lg font-bold capitalize text-black dark:text-white">
               {board ? board.name : "Select a board"}
             </h1>
-            <Image src={navOpen ? chevronUpIcon : chevronDownIcon} alt="" />
+            <ChevronIcon
+              className={`transition-transform ${navOpen ? "-rotate-180" : ""}`}
+            />
           </button>
-          <h1 className="hidden text-2xl font-bold capitalize text-black md:block">
+          <h1 className="hidden text-2xl font-bold capitalize text-black dark:text-white md:block">
             {board ? board.name : "Select a board"}
           </h1>
         </div>

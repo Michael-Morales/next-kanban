@@ -64,7 +64,9 @@ export function CreateTask({ onClose, columnId, newIdx }: IProps) {
         placeholder="e.g. The header goes to the background when clicking on the navigation button."
       />
       <fieldset>
-        <legend className="mb-2 text-xs font-bold capitalize">subtasks</legend>
+        <legend className="mb-2 text-xs font-bold capitalize dark:text-white">
+          subtasks
+        </legend>
         <div className="flex flex-col gap-y-3">
           {fields.map((field, i) => (
             <DeletableInput

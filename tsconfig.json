@@ -20,7 +20,8 @@
       "@features/*": ["src/features/*"],
       "@api/*": ["src/pages/api/*"],
       "@images/*": ["public/images/*"],
-      "@lib/*": ["src/lib/*"]
+      "@lib/*": ["src/lib/*"],
+      "@hooks/*": ["src/hooks/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

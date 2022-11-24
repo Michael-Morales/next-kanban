@@ -21,9 +21,12 @@ module.exports = {
       light: "#f4f7fd",
       dark: "#20212c",
       "light-blue": "#e9effa",
-      placeholder: "rgba(0, 1, 18, 0.25)",
       overlay: "rgba(32, 33, 44, 0.5)",
       transparent: "transparent",
+      placeholder: "rgba(130, 143, 163, 0.25)",
+      "theme-dark": "#2b2c37",
+      "theme-light-dark": "#3e3f4e",
+      "theme-dark-primary": "rgba(99, 95, 199, 0.25)",
     },
     extend: {
       fontFamily: {
@@ -34,5 +37,6 @@ module.exports = {
       },
     },
   },
+  darkMode: "class",
   plugins: [require("@tailwindcss/forms")],
 };

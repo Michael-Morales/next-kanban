@@ -50,7 +50,7 @@ export function TaskView({
       <form onSubmit={handleSubmit(onSubmit)}>
         {!!subtasks.length && (
           <div className="mb-6">
-            <h4 className="mb-4 text-xs font-bold">
+            <h4 className="mb-4 text-xs font-bold dark:text-white">
               Subtasks ({completedSubtasks.length} of {subtasks.length})
             </h4>
             <div className="flex flex-col gap-y-2">
