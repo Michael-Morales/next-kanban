@@ -52,7 +52,20 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  // add callbacks
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.userId = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.userId = token.userId;
+      }
+      return session;
+    },
+  },
 };
 
 export default NextAuth(authOptions);

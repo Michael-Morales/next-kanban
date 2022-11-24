@@ -31,7 +31,7 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
 
   const handleOpenNav = () => {
     if (menuRef.current?.isOpen) menuRef.current?.close();
-    setNavOpen(!navOpen);
+    setNavOpen((prev) => !prev);
   };
 
   const handleMenuOpen = () => {
@@ -84,15 +84,10 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
             {board ? board.name : "Select a board"}
           </h1>
         </div>
-        <button
-          className="px-2.5"
-          onClick={handleMenuOpen}
-          disabled={!board}
-          aria-label="menu"
-        >
+        <button className="px-2.5" onClick={handleMenuOpen} aria-label="menu">
           <Image src={ellipsisIcon} alt="" />
         </button>
-        {board && <Menu ref={menuRef} board={board} />}
+        <Menu ref={menuRef} />
       </header>
     </>
   );

@@ -1,7 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { unstable_getServerSession } from "next-auth";
 
 import prisma from "@lib/prismadb";
 import { toggleSubtaskSchema } from "@lib/validation";
+import { authOptions } from "@api/auth/[...nextauth]";
 
 export async function toggleSubtask(taskId: string, ids: string[]) {
   await prisma.subtask.updateMany({
@@ -27,6 +29,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const session = await unstable_getServerSession(req, res, authOptions);
+
+  if (!session) {
+    return res.status(401).json({ message: "You must be logged in" });
+  }
+
   try {
     switch (req.method) {
       case "PATCH":

@@ -1,14 +1,12 @@
 import Link from "next/link";
-import { useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signIn, useSession } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 import { Input, Button } from "@features/ui";
 import { ISignin, signinSchema } from "@lib/validation";
 
 export function Signin() {
-  const { data: session } = useSession();
   const {
     register,
     handleSubmit,
@@ -22,16 +20,13 @@ export function Signin() {
     signIn("app-signin", {
       email,
       password,
+      callbackUrl: "/dashboard",
     });
   };
 
   const checkErrors = () => {
     return !!errors.email || !!errors.password || !isDirty;
   };
-
-  useEffect(() => {
-    console.log(session);
-  }, [session]);
 
   return (
     <div className="w-full max-w-md rounded-lg bg-white px-4 py-6 shadow-lg shadow-shadow">

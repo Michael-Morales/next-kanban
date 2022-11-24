@@ -1,8 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { Subtask } from "@prisma/client";
+import { unstable_getServerSession } from "next-auth";
 
 import prisma from "@lib/prismadb";
 import { updateTaskSchema } from "@lib/validation";
+import { authOptions } from "@api/auth/[...nextauth]";
 
 export async function deleteTask(id: string) {
   await prisma.task.delete({ where: { id } });
@@ -50,6 +52,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const session = await unstable_getServerSession(req, res, authOptions);
+
+  if (!session) {
+    return res.status(401).json({ message: "You must be logged in" });
+  }
+
   try {
     switch (req.method) {
       case "DELETE":

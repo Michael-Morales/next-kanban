@@ -1,9 +1,12 @@
+import type { GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
 import { QueryClient, dehydrate } from "@tanstack/react-query";
+import { unstable_getServerSession } from "next-auth";
 
 import { Empty, useBoards } from "@features/dashboard";
 import { Layout } from "@features/ui";
 import { getBoards } from "@api/boards";
+import { authOptions } from "@api/auth/[...nextauth]";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -25,10 +28,26 @@ export default function Dashboard() {
   );
 }
 
-export async function getServerSideProps() {
+export async function getServerSideProps({
+  req,
+  res,
+}: GetServerSidePropsContext) {
+  const session = await unstable_getServerSession(req, res, authOptions);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
   const queryClient = new QueryClient();
 
-  const boards = await queryClient.fetchQuery(["boards"], getBoards);
+  const boards = await queryClient.fetchQuery(["boards"], () =>
+    getBoards(session.user.userId)
+  );
 
   if (!!boards.length) {
     return {
