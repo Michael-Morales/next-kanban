@@ -1,4 +1,4 @@
-import type { Board, Column, Task, Subtask } from "@prisma/client";
+import type { Task, Subtask } from "@prisma/client";
 import {
   useState,
   forwardRef,
@@ -7,13 +7,13 @@ import {
   useRef,
 } from "react";
 import { useRouter } from "next/router";
+import { signOut } from "next-auth/react";
 
-import { Modal, IModalHandle, DeleteModal } from "@features/ui";
+import { Modal, IModalHandle, DeleteModal, Button } from "@features/ui";
 import { EditTask, EditBoard, useBoard, useTask } from "@features/dashboard";
 
 interface IProps {
   task?: Task & { subtasks: Subtask[] };
-  board?: Board & { columns: Column[] };
   closeRootModal?: () => void;
 }
 
@@ -25,7 +25,7 @@ export interface IMenuHandle {
 }
 
 export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
-  { task, board, closeRootModal },
+  { task, closeRootModal },
   ref
 ) {
   const [isOpen, setIsOpen] = useState(false);
@@ -39,13 +39,13 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
       closeRootModal && closeRootModal();
     }
   );
-  const { deleteMutation: boardMutation } = useBoard(
-    router.query.id as string,
-    () => {
-      deleteModalRef.current?.close();
-      router.push("/dashboard");
-    }
-  );
+  const {
+    query: { data: board },
+    deleteMutation: boardMutation,
+  } = useBoard(router.query.id as string, () => {
+    deleteModalRef.current?.close();
+    router.push("/dashboard");
+  });
 
   const title = task ? "task" : "board";
 
@@ -77,45 +77,62 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
         }`}
         onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
-        <button
-          className="text-left font-bold capitalize"
-          onClick={() => editModalRef.current?.open()}
-        >
-          edit {title}
-        </button>
-        <button
-          className="text-left font-bold capitalize text-danger"
-          onClick={() => deleteModalRef.current?.open()}
-        >
-          delete {title}
-        </button>
+        {(task || board) && (
+          <>
+            <button
+              className="text-left font-bold capitalize"
+              onClick={() => editModalRef.current?.open()}
+            >
+              edit {title}
+            </button>
+            <button
+              className="text-left font-bold capitalize text-danger"
+              onClick={() => deleteModalRef.current?.open()}
+            >
+              delete {title}
+            </button>
+          </>
+        )}
+        {!task && (
+          <Button
+            buttonStyle="danger"
+            size="small"
+            onClick={() => signOut({ callbackUrl: "/" })}
+          >
+            sign out
+          </Button>
+        )}
       </div>
       <Modal ref={editModalRef} title={`Edit ${title}`}>
-        {task ? (
-          <EditTask onClose={closeRootModal!} task={task!} />
-        ) : (
-          <EditBoard
-            onClose={() => editModalRef.current?.close()}
-            board={board!}
-          />
-        )}
+        <>
+          {task && <EditTask onClose={closeRootModal!} task={task} />}
+          {!task && board && (
+            <EditBoard
+              onClose={() => editModalRef.current?.close()}
+              board={board}
+            />
+          )}
+        </>
       </Modal>
       <Modal ref={deleteModalRef} title={`Delete this ${title}`} type="delete">
-        {task ? (
-          <DeleteModal
-            content={`Are you sure you want to delete the ‘${task?.title}’ task and its subtasks? This action cannot be reversed.`}
-            onDelete={handleDelete}
-            onClose={() => deleteModalRef.current?.close()}
-            loading={taskMutation.isLoading}
-          />
-        ) : (
-          <DeleteModal
-            content={`Are you sure you want to delete the ‘${board?.name}’ board? This action will remove all columns and tasks and cannot be reversed.`}
-            onDelete={handleDelete}
-            onClose={() => deleteModalRef.current?.close()}
-            loading={boardMutation.isLoading}
-          />
-        )}
+        <>
+          {task && (
+            <DeleteModal
+              content={`Are you sure you want to delete the ‘${task.title}’ task and its subtasks? This action cannot be reversed.`}
+              onDelete={handleDelete}
+              onClose={() => deleteModalRef.current?.close()}
+              loading={taskMutation.isLoading}
+            />
+          )}
+          {!task && board && (
+            <DeleteModal
+              content={`Are you sure you want to delete the ‘${board.name}’ board? This action will remove all columns and tasks and cannot be reversed.`}
+              onDelete={handleDelete}
+              onClose={() => deleteModalRef.current?.close()}
+              loading={boardMutation.isLoading}
+            />
+          )}
+        </>
       </Modal>
     </>
   );

@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-query";
 import { Plus_Jakarta_Sans } from "@next/font/google";
 import NextNProgress from "nextjs-progressbar";
+import { SessionProvider } from "next-auth/react";
 
 import "@styles/globals.css";
 
@@ -16,17 +17,22 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
 });
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
   return (
-    <QueryClientProvider client={queryClient}>
-      <Hydrate state={pageProps.dehydratedState}>
-        <div className={`${plusJakartaSans.variable} font-sans`}>
-          <NextNProgress color="#635fc7" options={{ showSpinner: false }} />
-          <Component {...pageProps} />
-          <div id="modal" />
-        </div>
-      </Hydrate>
-    </QueryClientProvider>
+    <SessionProvider session={session}>
+      <QueryClientProvider client={queryClient}>
+        <Hydrate state={pageProps.dehydratedState}>
+          <div className={`${plusJakartaSans.variable} font-sans`}>
+            <NextNProgress color="#635fc7" options={{ showSpinner: false }} />
+            <Component {...pageProps} />
+            <div id="modal" />
+          </div>
+        </Hydrate>
+      </QueryClientProvider>
+    </SessionProvider>
   );
 }

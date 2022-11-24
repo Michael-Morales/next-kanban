@@ -1,8 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import type { Column } from "@prisma/client";
+import { unstable_getServerSession } from "next-auth";
 
 import prisma from "@lib/prismadb";
 import { updateBoardSchema } from "@lib/validation";
+import { authOptions } from "@api/auth/[...nextauth]";
 
 export async function getBoardById(id: string) {
   const res = await prisma.board.findUnique({
@@ -71,6 +73,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const session = await unstable_getServerSession(req, res, authOptions);
+
+  if (!session) {
+    return res.status(401).json({ message: "You must be logged in" });
+  }
+
   try {
     switch (req.method) {
       case "GET":
@@ -92,7 +100,6 @@ export default async function handler(
           .json({ message: `HTTP method ${req.method} is not supported.` });
     }
   } catch (err) {
-    console.log(err);
     return res.status(500).json({ message: "Something went wrong." });
   }
 }

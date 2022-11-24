@@ -1,13 +1,13 @@
 import type { GetServerSidePropsContext } from "next";
 import { unstable_getServerSession } from "next-auth";
 
-import { Signin } from "@features/auth";
+import { Signup } from "@features/auth";
 import { authOptions } from "@api/auth/[...nextauth]";
 
-export default function Home() {
+export default function SignupPage() {
   return (
     <div className="mx-4 flex h-screen items-center justify-center">
-      <Signin />
+      <Signup />
     </div>
   );
 }
