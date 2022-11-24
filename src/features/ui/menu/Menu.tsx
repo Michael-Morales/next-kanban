@@ -77,33 +77,31 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
         }`}
         onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
-        <>
-          {(task || board) && (
-            <>
-              <button
-                className="text-left font-bold capitalize"
-                onClick={() => editModalRef.current?.open()}
-              >
-                edit {title}
-              </button>
-              <button
-                className="text-left font-bold capitalize text-danger"
-                onClick={() => deleteModalRef.current?.open()}
-              >
-                delete {title}
-              </button>
-            </>
-          )}
-          {!task && (
-            <Button
-              buttonStyle="danger"
-              size="small"
-              onClick={() => signOut({ callbackUrl: "/" })}
+        {(task || board) && (
+          <>
+            <button
+              className="text-left font-bold capitalize"
+              onClick={() => editModalRef.current?.open()}
             >
-              sign out
-            </Button>
-          )}
-        </>
+              edit {title}
+            </button>
+            <button
+              className="text-left font-bold capitalize text-danger"
+              onClick={() => deleteModalRef.current?.open()}
+            >
+              delete {title}
+            </button>
+          </>
+        )}
+        {!task && (
+          <Button
+            buttonStyle="danger"
+            size="small"
+            onClick={() => signOut({ callbackUrl: "/" })}
+          >
+            sign out
+          </Button>
+        )}
       </div>
       <Modal ref={editModalRef} title={`Edit ${title}`}>
         <>
