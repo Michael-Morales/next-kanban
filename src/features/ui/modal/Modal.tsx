@@ -12,9 +12,7 @@ import Image from "next/image";
 import { CSSTransition } from "react-transition-group";
 
 import { Overlay } from "./Overlay";
-import { Menu, IMenuHandle } from "@features/ui";
-
-import ellipsisIcon from "@images/icon-vertical-ellipsis.svg";
+import { Menu, IMenuHandle, EllipsisIcon } from "@features/ui";
 
 interface IProps {
   children: JSX.Element;
@@ -98,7 +96,7 @@ export const Modal = forwardRef<IModalHandle, IProps>(function Modal(
             {task && (
               <>
                 <button className="px-2.5" onClick={handleMenu}>
-                  <Image src={ellipsisIcon} alt="" />
+                  <EllipsisIcon />
                 </button>
                 <Menu
                   ref={menuRef}

@@ -9,12 +9,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
-import { MobileNav, Menu, IMenuHandle, Overlay } from "@features/ui";
+import {
+  MobileNav,
+  Menu,
+  IMenuHandle,
+  Overlay,
+  MobileLogo,
+  DesktopLogo,
+  EllipsisIcon,
+} from "@features/ui";
 import { useBoard } from "@features/dashboard";
 
-import mobileLogo from "@images/logo-mobile.svg";
-import desktopLogo from "@images/logo-dark.svg";
-import ellipsisIcon from "@images/icon-vertical-ellipsis.svg";
 import chevronUpIcon from "@images/icon-chevron-up.svg";
 import chevronDownIcon from "@images/icon-chevron-down.svg";
 
@@ -67,9 +72,9 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
       <MobileNav isOpen={navOpen} />
       <header className="relative z-20 flex items-center justify-between bg-white py-4 px-4 md:px-8">
         <div className="flex items-center gap-x-4 md:gap-x-14">
-          <Link href="/dashboard" aria-label="home">
-            <Image className="md:hidden" src={mobileLogo} alt="" />
-            <Image className="hidden md:block" src={desktopLogo} alt="" />
+          <Link href="/dashboard" aria-label="home" className="text-black">
+            <MobileLogo className="md:hidden" />
+            <DesktopLogo className="hidden md:block" />
           </Link>
           <button
             className="flex items-center gap-x-2 md:hidden"
@@ -85,7 +90,7 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
           </h1>
         </div>
         <button className="px-2.5" onClick={handleMenuOpen} aria-label="menu">
-          <Image src={ellipsisIcon} alt="" />
+          <EllipsisIcon />
         </button>
         <Menu ref={menuRef} />
       </header>
