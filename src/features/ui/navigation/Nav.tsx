@@ -2,9 +2,8 @@ import { useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
-import { BoardIcon, Modal, IModalHandle } from "@features/ui";
+import { BoardIcon, Modal, IModalHandle, ToggleDarkMode } from "@features/ui";
 import { CreateBoard, useBoards } from "@features/dashboard";
-import { useDarkMode } from "@hooks/useDarkMode";
 
 export function Nav() {
   const router = useRouter();
@@ -12,12 +11,11 @@ export function Nav() {
   const {
     query: { data: boards },
   } = useBoards();
-  const [isDark, setIsDark] = useDarkMode();
 
   return (
     <>
-      <div>
-        <div>
+      <div className="flex h-full flex-col justify-between">
+        <div className="flex-1">
           <p className="mb-5 text-xs font-bold uppercase tracking-widest">
             all boards ({boards?.length})
           </p>
@@ -59,11 +57,7 @@ export function Nav() {
             create new board
           </button>
         </div>
-        <div>
-          <button onClick={() => setIsDark(isDark ? "light" : "dark")}>
-            toggle theme
-          </button>
-        </div>
+        <ToggleDarkMode />
       </div>
       <Modal ref={modalRef} title="Add new board">
         <CreateBoard onClose={() => modalRef.current?.close()} />
