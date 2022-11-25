@@ -14,6 +14,11 @@ export function Signup() {
     handleSubmit,
     formState: { errors, isDirty },
   } = useForm<ISignup>({
+    defaultValues: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
     resolver: zodResolver(signupSchema),
   });
   const { signupMutation } = useAuth(() => router.push("/"));

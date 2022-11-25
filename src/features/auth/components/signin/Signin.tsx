@@ -12,6 +12,10 @@ export function Signin() {
     handleSubmit,
     formState: { errors, isDirty },
   } = useForm<ISignin>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
     resolver: zodResolver(signinSchema),
   });
 
