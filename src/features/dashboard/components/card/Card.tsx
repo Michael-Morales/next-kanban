@@ -1,19 +1,22 @@
-import type { Task, Subtask } from "@prisma/client";
+import type { Task } from "@prisma/client";
 import { useRef } from "react";
 import { Draggable } from "react-beautiful-dnd";
 
-import { TaskView } from "@features/dashboard";
+import { TaskView, useSubtasks } from "@features/dashboard";
 import { Modal, IModalHandle } from "@features/ui";
 
 interface IProps {
-  task: Task & { subtasks: Subtask[] };
+  task: Task;
   idx: number;
 }
 
 export function Card({ task, idx }: IProps) {
-  const { id, title, subtasks, description } = task;
+  const { id, title, description } = task;
+  const {
+    query: { data: subtasks },
+  } = useSubtasks(id);
   const completedSubtasks = subtasks
-    .filter(({ isCompleted }) => isCompleted)
+    ?.filter(({ isCompleted }) => isCompleted)
     .map(({ id }) => id);
   const modalRef = useRef<IModalHandle>(null);
 
@@ -32,8 +35,8 @@ export function Card({ task, idx }: IProps) {
               {title}
             </h3>
             <p className="text-xs font-bold">
-              {!!subtasks.length
-                ? `${completedSubtasks.length} of ${subtasks.length} subtasks`
+              {!!subtasks?.length
+                ? `${completedSubtasks?.length} of ${subtasks.length} subtasks`
                 : "No subtask"}
             </p>
           </div>

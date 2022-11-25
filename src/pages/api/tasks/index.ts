@@ -12,18 +12,12 @@ export async function getTasksByColumnId(id: string) {
     orderBy: {
       position: "asc",
     },
-    include: {
-      subtasks: {
-        orderBy: {
-          createdAt: "asc",
-        },
-        select: {
-          id: true,
-          title: true,
-          isCompleted: true,
-          taskId: true,
-        },
-      },
+    select: {
+      id: true,
+      title: true,
+      description: true,
+      columnId: true,
+      position: true,
     },
   });
 }

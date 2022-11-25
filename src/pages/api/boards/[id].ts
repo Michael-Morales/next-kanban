@@ -11,14 +11,6 @@ export async function getBoardById(id: string) {
     where: { id },
     select: {
       name: true,
-      columns: {
-        orderBy: { createdAt: "asc" },
-        select: {
-          id: true,
-          boardId: true,
-          name: true,
-        },
-      },
     },
   });
 

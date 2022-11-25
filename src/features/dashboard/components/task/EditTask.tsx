@@ -1,19 +1,22 @@
-import type { Task, Subtask } from "@prisma/client";
+import type { Task } from "@prisma/client";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input, Button, DeletableInput } from "@features/ui";
 import { updateTaskSchema, IUpdateTask } from "@lib/validation";
-import { useTask } from "@features/dashboard";
+import { useTask, useSubtasks } from "@features/dashboard";
 
 interface IProps {
   onClose: () => void;
-  task: Task & { subtasks: Subtask[] };
+  task: Task;
 }
 
 export function EditTask({ onClose, task }: IProps) {
-  const { id, title, description, subtasks, columnId } = task;
-  const mappedSubtasks = subtasks.map(({ id, title, isCompleted }) => ({
+  const { id, title, description, columnId } = task;
+  const {
+    query: { data: subtasks },
+  } = useSubtasks(id);
+  const mappedSubtasks = subtasks?.map(({ id, title, isCompleted }) => ({
     id,
     title,
     isCompleted,

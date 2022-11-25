@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
@@ -7,10 +8,12 @@ import { Input, Button } from "@features/ui";
 import { ISignin, signinSchema } from "@lib/validation";
 
 export function Signin() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
     formState: { errors, isDirty },
+    setError,
   } = useForm<ISignin>({
     defaultValues: {
       email: "",
@@ -24,7 +27,13 @@ export function Signin() {
     signIn("app-signin", {
       email,
       password,
-      callbackUrl: "/dashboard",
+      redirect: false,
+    }).then((res) => {
+      if (res?.ok) {
+        router.push("/dashboard");
+      } else {
+        setError("email", { type: "login", message: "Wrong credentials" });
+      }
     });
   };
 

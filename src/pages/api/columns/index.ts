@@ -5,6 +5,21 @@ import prisma from "@lib/prismadb";
 import { createColumnSchema } from "@lib/validation";
 import { authOptions } from "@api/auth/[...nextauth]";
 
+export async function getColumnsByBoardId(id: string) {
+  return await prisma.column.findMany({
+    where: {
+      boardId: id,
+    },
+    select: {
+      id: true,
+      name: true,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+}
+
 export async function createColumn(name: string, boardId: string) {
   return await prisma.column.create({
     data: {
@@ -26,6 +41,11 @@ export default async function handler(
 
   try {
     switch (req.method) {
+      case "GET":
+        const { id } = req.query;
+        const columns = await getColumnsByBoardId(id as string);
+        return res.status(200).json(columns);
+
       case "POST":
         const { name, boardId } = createColumnSchema.parse(req.body);
         await createColumn(name, boardId!);

@@ -10,6 +10,7 @@ export function useTask(id?: string, columnId?: string, callback?: () => void) {
     mutationFn: (values: IUpdateTask) => axios.patch(`/tasks/${id}`, values),
     onSuccess: () => {
       queryClient.invalidateQueries(["tasks", columnId]);
+      queryClient.invalidateQueries(["subtasks", id]);
       callback && callback();
     },
   });
