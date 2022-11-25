@@ -9,15 +9,17 @@ import { Layout } from "@features/ui";
 import { Column, NewColumn } from "@features/dashboard";
 import { getBoards } from "@api/boards";
 import { getBoardById } from "@api/boards/[id]";
+import { getColumnsByBoardId } from "@api/columns";
 import { getTasksByColumnId } from "@api/tasks";
-import { useBoard, useTasks } from "@features/dashboard";
+import { getSubtasksByTaskId } from "@api/subtasks";
+import { useTasks, useColumns } from "@features/dashboard";
 import { authOptions } from "@api/auth/[...nextauth]";
 
 export default function Board() {
   const router = useRouter();
   const {
-    query: { data: board },
-  } = useBoard(router.query.id as string);
+    query: { data: columns },
+  } = useColumns(router.query.id as string);
   const { moveMutation } = useTasks();
 
   const onDrop = (result: DropResult) => {
@@ -28,7 +30,7 @@ export default function Board() {
     <Layout>
       <DragDropContext onDragEnd={onDrop}>
         <div className="flex min-h-full gap-x-6 px-4 py-6 md:px-6">
-          {board?.columns.map((column) => (
+          {columns?.map((column) => (
             <Column key={column.id} column={column} />
           ))}
           <NewColumn />
@@ -71,13 +73,28 @@ export async function getServerSideProps({
     };
   }
 
+  const columns = await queryClient.fetchQuery({
+    queryKey: ["columns", params?.id],
+    queryFn: () => getColumnsByBoardId(params?.id as string),
+  });
+
   await Promise.all(
-    board.columns.map(({ id }) =>
-      queryClient.prefetchQuery({
+    columns.map(async ({ id }) => {
+      const tasks = await queryClient.fetchQuery({
         queryKey: ["tasks", id],
         queryFn: () => getTasksByColumnId(id),
-      })
-    )
+      });
+
+      await Promise.all(
+        tasks.map(
+          async ({ id }) =>
+            await queryClient.prefetchQuery({
+              queryKey: ["subtasks", id],
+              queryFn: () => getSubtasksByTaskId(id),
+            })
+        )
+      );
+    })
   );
 
   return {

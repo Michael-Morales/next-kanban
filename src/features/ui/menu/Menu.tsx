@@ -1,4 +1,4 @@
-import type { Task, Subtask } from "@prisma/client";
+import type { Task } from "@prisma/client";
 import {
   useState,
   forwardRef,
@@ -14,7 +14,7 @@ import { Modal, IModalHandle, DeleteModal, Button } from "@features/ui";
 import { EditTask, EditBoard, useBoard, useTask } from "@features/dashboard";
 
 interface IProps {
-  task?: Task & { subtasks: Subtask[] };
+  task?: Task;
   closeRootModal?: () => void;
 }
 

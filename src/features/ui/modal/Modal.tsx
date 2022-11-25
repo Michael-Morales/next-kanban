@@ -16,7 +16,7 @@ import { Menu, IMenuHandle, EllipsisIcon } from "@features/ui";
 interface IProps {
   children: JSX.Element;
   title: string;
-  task?: Task & { subtasks: Subtask[] };
+  task?: Task;
   type?: "delete";
 }
 

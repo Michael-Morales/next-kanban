@@ -23,6 +23,7 @@ export function useTasks(id?: string, callback?: () => void) {
     mutationFn: (values: ICreateTask) => axios.post("/tasks", values),
     onSuccess: () => {
       queryClient.invalidateQueries(["tasks", id]);
+      queryClient.invalidateQueries(["subtasks"]);
       callback && callback();
     },
   });
