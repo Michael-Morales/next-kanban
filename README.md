@@ -1,34 +1,41 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# NEXT KANBAN
 
-## Getting Started
+I created this kanban like management app with the goal of simulating a professional work environment.
 
-First, run the development server:
+[Live Demo](https://next-kanban.netlify.app)
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## How I worked on this project
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- I built the UI based on Figma designs
+- I worked with tasks with github projects
+- I used feature branches and pull requests
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Why I built the project this way
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- I used Tailwindcss to style the app for its simplicity of use and keep the styles in the same file as the component's JSX.
+- I used React Query instead of a global state management library like Redux to avoid the client side and server side data to be out of sync. Also because React Query caches the data and avoids unnecessary calls to the API.
+- I used Next Auth as an authentication library to make the most out of the features that this library provides out of the box (JWT, CSRF tokens, ...).
+- I used Zod along side React Hook Form to validate user inputs on the client and the server.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Stack
 
-## Learn More
+### Front
 
-To learn more about Next.js, take a look at the following resources:
+- Next.js
+- React Query
+- Next Auth
+- Axios
+- Tailwindcss
+- React Hook Form
+- Zod
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Back
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- Next.js API routes
+- Prisma ORM
+- Supabase Postgresql database
+- Argon2
 
-## Deploy on Vercel
+### Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Netlify
