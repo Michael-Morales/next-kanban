@@ -8,9 +8,9 @@ import { useSubtasks } from "@features/dashboard";
 
 interface IProps {
   description: string | null;
-  subtasks: Subtask[];
+  subtasks?: Subtask[];
   taskId: string;
-  completedSubtasks: string[];
+  completedSubtasks?: string[];
   onClose: () => void;
 }
 
@@ -29,11 +29,10 @@ export function TaskView({
     defaultValues: { taskId, subtasks: completedSubtasks },
     resolver: zodResolver(toggleSubtaskSchema),
   });
-  const { toggleMutation } = useSubtasks();
+  const { toggleMutation } = useSubtasks(taskId);
 
-  const sortedSubtasks = [...subtasks].sort(
-    (a, b) => +b.isCompleted - +a.isCompleted
-  );
+  const sortedSubtasks =
+    subtasks && [...subtasks].sort((a, b) => +b.isCompleted - +a.isCompleted);
 
   const onSubmit: SubmitHandler<IToggleSubtask> = async (values) => {
     if (isDirty) {
@@ -48,13 +47,13 @@ export function TaskView({
     <>
       {description && <p className="text-sm">{description}</p>}
       <form onSubmit={handleSubmit(onSubmit)}>
-        {!!subtasks.length && (
+        {!!subtasks?.length && (
           <div className="mb-6">
             <h4 className="mb-4 text-xs font-bold dark:text-white">
-              Subtasks ({completedSubtasks.length} of {subtasks.length})
+              Subtasks ({completedSubtasks?.length} of {subtasks.length})
             </h4>
             <div className="flex flex-col gap-y-2">
-              {sortedSubtasks.map(({ id, title }) => (
+              {sortedSubtasks?.map(({ id, title }) => (
                 <Checkbox
                   key={id}
                   label={title}

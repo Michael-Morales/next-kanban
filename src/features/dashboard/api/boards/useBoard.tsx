@@ -1,4 +1,4 @@
-import type { Board, Column } from "@prisma/client";
+import type { Board } from "@prisma/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 import type { IUpdateBoard } from "@lib/validation";
@@ -12,7 +12,7 @@ async function getBoard(id: string) {
 export function useBoard(id: string, callback?: () => void) {
   const queryClient = useQueryClient();
 
-  const query = useQuery<Board & { columns: Column[] }>({
+  const query = useQuery<Board>({
     queryKey: ["boards", id],
     queryFn: () => getBoard(id),
     refetchOnWindowFocus: false,
@@ -22,6 +22,7 @@ export function useBoard(id: string, callback?: () => void) {
     mutationFn: (values: IUpdateBoard) => axios.patch(`/boards/${id}`, values),
     onSuccess: () => {
       queryClient.invalidateQueries(["boards"]);
+      queryClient.invalidateQueries(["columns", id]);
       callback && callback();
     },
   });

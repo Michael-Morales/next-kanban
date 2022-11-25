@@ -5,6 +5,22 @@ import prisma from "@lib/prismadb";
 import { toggleSubtaskSchema } from "@lib/validation";
 import { authOptions } from "@api/auth/[...nextauth]";
 
+export async function getSubtasksByTaskId(id: string) {
+  return await prisma.subtask.findMany({
+    where: {
+      taskId: id,
+    },
+    select: {
+      id: true,
+      title: true,
+      isCompleted: true,
+    },
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+}
+
 export async function toggleSubtask(taskId: string, ids: string[]) {
   await prisma.subtask.updateMany({
     where: {
@@ -37,6 +53,11 @@ export default async function handler(
 
   try {
     switch (req.method) {
+      case "GET":
+        const { id } = req.query;
+        const data = await getSubtasksByTaskId(id as string);
+        return res.status(200).json(data);
+
       case "PATCH":
         const { taskId, subtasks } = toggleSubtaskSchema.parse(req.body);
         await toggleSubtask(taskId, subtasks);

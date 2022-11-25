@@ -1,20 +1,23 @@
-import type { Board, Column } from "@prisma/client";
+import type { Board } from "@prisma/client";
 import { useRouter } from "next/router";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input, DeletableInput, Button } from "@features/ui";
 import { updateBoardSchema, IUpdateBoard } from "@lib/validation";
-import { useBoard } from "@features/dashboard";
+import { useBoard, useColumns } from "@features/dashboard";
 
 interface IProps {
   onClose: () => void;
-  board: Board & { columns: Column[] };
+  board: Board;
 }
 
 export function EditBoard({ onClose, board }: IProps) {
   const router = useRouter();
-  const mappedColumns = board.columns.map(({ id, name }) => ({ id, name }));
+  const {
+    query: { data: columns },
+  } = useColumns(router.query.id as string);
+  const mappedColumns = columns?.map(({ id, name }) => ({ id, name }));
   const {
     register,
     handleSubmit,

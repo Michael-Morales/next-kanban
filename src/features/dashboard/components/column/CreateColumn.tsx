@@ -24,7 +24,7 @@ export function CreateColumn({ onClose }: IProps) {
     },
     resolver: zodResolver(createColumnSchema),
   });
-  const { createMutation } = useColumns(onClose);
+  const { createMutation } = useColumns(boardId as string, onClose);
 
   const onSubmit: SubmitHandler<ICreateColumn> = async (values) => {
     const parsedValues = createColumnSchema.parse(values);
