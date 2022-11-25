@@ -5,6 +5,7 @@ import {
   useImperativeHandle,
   MouseEvent,
   useRef,
+  useEffect,
 } from "react";
 import { useRouter } from "next/router";
 import { signOut } from "next-auth/react";
@@ -43,7 +44,6 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
     query: { data: board },
     deleteMutation: boardMutation,
   } = useBoard(router.query.id as string, () => {
-    deleteModalRef.current?.close();
     router.push("/dashboard");
   });
 
@@ -68,6 +68,18 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
     }),
     [isOpen]
   );
+
+  const handleCloseDeleteModal = () => {
+    deleteModalRef.current?.close();
+  };
+
+  useEffect(() => {
+    router.events.on("routeChangeComplete", handleCloseDeleteModal);
+
+    return () => {
+      router.events.off("routeChangeComplete", handleCloseDeleteModal);
+    };
+  }, [router]);
 
   return (
     <>
@@ -125,7 +137,10 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
       {!task && board && (
         <>
           <Modal ref={editModalRef} title={`Edit ${title}`}>
-            <EditBoard onClose={closeRootModal!} board={board} />
+            <EditBoard
+              onClose={() => editModalRef.current?.close()}
+              board={board}
+            />
           </Modal>
           <Modal
             ref={deleteModalRef}

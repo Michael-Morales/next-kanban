@@ -67,7 +67,7 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
     <>
       <Overlay show={navOpen} onDismiss={() => setNavOpen(false)} />
       <MobileNav isOpen={navOpen} />
-      <header className="relative z-20 flex items-center justify-between bg-white py-4 px-4 dark:bg-theme-dark md:px-8">
+      <header className="relative z-20 flex items-center justify-between bg-white py-4 px-4 transition-colors dark:bg-theme-dark md:px-8">
         <div className="flex items-center gap-x-4 md:gap-x-14">
           <Link
             href="/dashboard"
@@ -75,20 +75,20 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
             className="text-black dark:text-white"
           >
             <MobileLogo className="md:hidden" />
-            <DesktopLogo className="hidden md:block" />
+            <DesktopLogo className="hidden transition-colors md:block" />
           </Link>
           <button
             className="flex items-center gap-x-2 md:hidden"
             onClick={handleOpenNav}
           >
-            <h1 className="text-lg font-bold capitalize text-black dark:text-white">
+            <h1 className="text-lg font-bold capitalize text-black transition-colors dark:text-white">
               {board ? board.name : "Select a board"}
             </h1>
             <ChevronIcon
               className={`transition-transform ${navOpen ? "-rotate-180" : ""}`}
             />
           </button>
-          <h1 className="hidden text-2xl font-bold capitalize text-black dark:text-white md:block">
+          <h1 className="hidden text-2xl font-bold capitalize text-black transition-colors dark:text-white md:block">
             {board ? board.name : "Select a board"}
           </h1>
         </div>

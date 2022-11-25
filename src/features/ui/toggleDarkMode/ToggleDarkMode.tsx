@@ -5,7 +5,7 @@ export function ToggleDarkMode() {
   const [isDark, setIsDark] = useDarkMode();
 
   return (
-    <div className="mb-2 flex w-full items-center justify-center gap-x-6 rounded-md bg-light-blue py-3.5 dark:bg-dark">
+    <div className="mb-2 flex w-full items-center justify-center gap-x-6 rounded-md bg-light-blue py-3.5 transition-colors dark:bg-dark">
       <LightIcon />
       <label
         className="relative h-5 w-10 cursor-pointer rounded-xl bg-primary p-[3px] transition-colors hover:bg-hover-primary"
