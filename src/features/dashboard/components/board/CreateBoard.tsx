@@ -56,7 +56,7 @@ export function CreateBoard({ onClose }: IProps) {
         error={errors.name?.message}
       />
       <fieldset>
-        <legend className="mb-2 text-xs font-bold capitalize">
+        <legend className="mb-2 text-xs font-bold capitalize dark:text-white">
           board columns
         </legend>
         <div className="flex flex-col gap-y-3">

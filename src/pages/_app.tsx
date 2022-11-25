@@ -22,6 +22,7 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
+
   return (
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>

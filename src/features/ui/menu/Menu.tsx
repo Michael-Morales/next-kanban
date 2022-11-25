@@ -5,6 +5,7 @@ import {
   useImperativeHandle,
   MouseEvent,
   useRef,
+  useEffect,
 } from "react";
 import { useRouter } from "next/router";
 import { signOut } from "next-auth/react";
@@ -43,7 +44,6 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
     query: { data: board },
     deleteMutation: boardMutation,
   } = useBoard(router.query.id as string, () => {
-    deleteModalRef.current?.close();
     router.push("/dashboard");
   });
 
@@ -69,10 +69,22 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
     [isOpen]
   );
 
+  const handleCloseDeleteModal = () => {
+    deleteModalRef.current?.close();
+  };
+
+  useEffect(() => {
+    router.events.on("routeChangeComplete", handleCloseDeleteModal);
+
+    return () => {
+      router.events.off("routeChangeComplete", handleCloseDeleteModal);
+    };
+  }, [router]);
+
   return (
     <>
       <div
-        className={`absolute top-[calc(100%+8px)] right-2 flex w-48 origin-top flex-col gap-y-4 rounded-lg bg-white p-4 text-sm shadow-lg transition-transform md:right-8 ${
+        className={`absolute top-[calc(100%+8px)] right-2 flex w-48 origin-top flex-col gap-y-4 rounded-lg bg-white p-4 text-sm shadow-lg transition dark:bg-dark md:right-8 ${
           isOpen ? "scale-y-1" : "scale-y-0"
         }`}
         onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
@@ -103,37 +115,47 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
           </Button>
         )}
       </div>
-      <Modal ref={editModalRef} title={`Edit ${title}`}>
+      {task && (
         <>
-          {task && <EditTask onClose={closeRootModal!} task={task} />}
-          {!task && board && (
-            <EditBoard
-              onClose={() => editModalRef.current?.close()}
-              board={board}
-            />
-          )}
-        </>
-      </Modal>
-      <Modal ref={deleteModalRef} title={`Delete this ${title}`} type="delete">
-        <>
-          {task && (
+          <Modal ref={editModalRef} title={`Edit ${title}`}>
+            <EditTask onClose={closeRootModal!} task={task} />
+          </Modal>
+          <Modal
+            ref={deleteModalRef}
+            title={`Delete this ${title}`}
+            type="delete"
+          >
             <DeleteModal
               content={`Are you sure you want to delete the ‘${task.title}’ task and its subtasks? This action cannot be reversed.`}
               onDelete={handleDelete}
               onClose={() => deleteModalRef.current?.close()}
               loading={taskMutation.isLoading}
             />
-          )}
-          {!task && board && (
+          </Modal>
+        </>
+      )}
+      {!task && board && (
+        <>
+          <Modal ref={editModalRef} title={`Edit ${title}`}>
+            <EditBoard
+              onClose={() => editModalRef.current?.close()}
+              board={board}
+            />
+          </Modal>
+          <Modal
+            ref={deleteModalRef}
+            title={`Delete this ${title}`}
+            type="delete"
+          >
             <DeleteModal
               content={`Are you sure you want to delete the ‘${board.name}’ board? This action will remove all columns and tasks and cannot be reversed.`}
               onDelete={handleDelete}
               onClose={() => deleteModalRef.current?.close()}
               loading={boardMutation.isLoading}
             />
-          )}
+          </Modal>
         </>
-      </Modal>
+      )}
     </>
   );
 });

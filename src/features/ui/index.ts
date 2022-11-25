@@ -7,3 +7,4 @@ export * from "./menu";
 export * from "./modal";
 export * from "./checkbox";
 export * from "./input";
+export * from "./toggleDarkMode";

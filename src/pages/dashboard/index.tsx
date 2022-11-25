@@ -1,23 +1,13 @@
 import type { GetServerSidePropsContext } from "next";
-import { useRouter } from "next/router";
 import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { unstable_getServerSession } from "next-auth";
 
-import { Empty, useBoards } from "@features/dashboard";
+import { Empty } from "@features/dashboard";
 import { Layout } from "@features/ui";
 import { getBoards } from "@api/boards";
 import { authOptions } from "@api/auth/[...nextauth]";
 
 export default function Dashboard() {
-  const router = useRouter();
-  const {
-    query: { data },
-  } = useBoards();
-
-  if (data && !!data.length) {
-    return router.push(`/dashboard/${data[0].id}`);
-  }
-
   return (
     <Layout>
       <Empty

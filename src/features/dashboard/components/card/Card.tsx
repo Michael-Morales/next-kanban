@@ -25,10 +25,10 @@ export function Card({ task, idx }: IProps) {
             ref={provided.innerRef}
             {...provided.draggableProps}
             {...provided.dragHandleProps}
-            className="group cursor-pointer rounded-lg bg-white px-4 py-6 shadow-lg shadow-shadow"
+            className="group cursor-pointer rounded-lg bg-white px-4 py-6 shadow-lg shadow-shadow transition-colors dark:bg-theme-dark"
             onClick={() => modalRef.current?.open()}
           >
-            <h3 className="mb-2 font-bold text-black transition-colors group-hover:text-primary">
+            <h3 className="mb-2 font-bold text-black transition-colors group-hover:text-primary dark:text-white">
               {title}
             </h3>
             <p className="text-xs font-bold">

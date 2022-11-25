@@ -8,13 +8,10 @@ import {
   MouseEvent,
 } from "react";
 import { createPortal } from "react-dom";
-import Image from "next/image";
 import { CSSTransition } from "react-transition-group";
 
 import { Overlay } from "./Overlay";
-import { Menu, IMenuHandle } from "@features/ui";
-
-import ellipsisIcon from "@images/icon-vertical-ellipsis.svg";
+import { Menu, IMenuHandle, EllipsisIcon } from "@features/ui";
 
 interface IProps {
   children: JSX.Element;
@@ -83,14 +80,14 @@ export const Modal = forwardRef<IModalHandle, IProps>(function Modal(
         }}
       >
         <div
-          className="absolute top-1/2 left-1/2 z-20 flex max-h-[90%] w-11/12 max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col gap-y-6 overflow-y-auto rounded-lg bg-white p-6 md:p-8"
+          className="absolute top-1/2 left-1/2 z-20 flex max-h-[90%] w-11/12 max-w-lg -translate-x-1/2 -translate-y-1/2 flex-col gap-y-6 overflow-y-auto rounded-lg bg-white p-6 dark:bg-theme-dark md:p-8"
           onClick={handleMenuClose}
           ref={modalRef}
         >
           <div className="relative flex items-center justify-between gap-x-6">
             <h3
               className={`flex-1 text-lg font-bold ${
-                type ? "text-danger" : "text-black"
+                type ? "text-danger" : "text-black dark:text-white"
               }`}
             >
               {title}
@@ -98,7 +95,7 @@ export const Modal = forwardRef<IModalHandle, IProps>(function Modal(
             {task && (
               <>
                 <button className="px-2.5" onClick={handleMenu}>
-                  <Image src={ellipsisIcon} alt="" />
+                  <EllipsisIcon />
                 </button>
                 <Menu
                   ref={menuRef}

@@ -9,7 +9,7 @@ export function NewColumn() {
   return (
     <>
       <button
-        className="shrink-0 grow-0 basis-72 rounded-lg bg-gradient-to-b from-light-blue text-2xl font-bold capitalize transition-colors hover:text-primary"
+        className="shrink-0 grow-0 basis-72 rounded-lg bg-light-blue text-2xl font-bold capitalize transition-colors hover:text-primary dark:bg-theme-dark"
         onClick={() => modalRef.current?.open()}
       >
         add column
