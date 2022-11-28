@@ -9,6 +9,8 @@ import { Plus_Jakarta_Sans } from "@next/font/google";
 import NextNProgress from "nextjs-progressbar";
 import { SessionProvider } from "next-auth/react";
 
+import { useDarkMode } from "@hooks/useDarkMode";
+
 import "@styles/globals.css";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -22,6 +24,7 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   const [queryClient] = useState(() => new QueryClient());
+  useDarkMode();
 
   return (
     <SessionProvider session={session}>
