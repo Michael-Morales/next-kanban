@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -17,6 +18,7 @@ export function CreateTask({ onClose, columnId, newIdx }: IProps) {
     handleSubmit,
     formState: { errors, dirtyFields },
     control,
+    setFocus,
   } = useForm<ICreateTask>({
     defaultValues: {
       title: "",
@@ -48,6 +50,10 @@ export function CreateTask({ onClose, columnId, newIdx }: IProps) {
       createMutation.isLoading
     );
   };
+
+  useEffect(() => {
+    setFocus("title");
+  }, [setFocus]);
 
   return (
     <form className="flex flex-col gap-y-6" onSubmit={handleSubmit(onSubmit)}>

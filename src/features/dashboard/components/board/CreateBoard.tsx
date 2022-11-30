@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { useForm, useFieldArray, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +18,7 @@ export function CreateBoard({ onClose }: IProps) {
     handleSubmit,
     control,
     formState: { errors, dirtyFields },
+    setFocus,
   } = useForm<ICreateBoard>({
     defaultValues: {
       name: "",
@@ -46,6 +48,10 @@ export function CreateBoard({ onClose }: IProps) {
       createMutation.isLoading
     );
   };
+
+  useEffect(() => {
+    setFocus("name");
+  }, [setFocus]);
 
   return (
     <form className="flex flex-col gap-y-6" onSubmit={handleSubmit(onSubmit)}>

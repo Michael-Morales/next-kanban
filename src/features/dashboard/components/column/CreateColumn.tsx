@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,6 +18,7 @@ export function CreateColumn({ onClose }: IProps) {
     register,
     handleSubmit,
     formState: { errors, isDirty },
+    setFocus,
   } = useForm<ICreateColumn>({
     defaultValues: {
       name: "",
@@ -34,6 +36,10 @@ export function CreateColumn({ onClose }: IProps) {
   const checkErrors = () => {
     return !isDirty || !!errors.name || createMutation.isLoading;
   };
+
+  useEffect(() => {
+    setFocus("name");
+  }, [setFocus]);
 
   return (
     <form className="flex flex-col gap-y-6" onSubmit={handleSubmit(onSubmit)}>
