@@ -26,8 +26,9 @@ export function useSubtasks(id: string) {
         "subtasks",
         taskId,
       ]);
+      const subtasksSet = new Set(subtasks);
       const updatedSubtasks = previousSubtasks?.map((subtask) =>
-        subtasks.includes(subtask.id)
+        subtasksSet.has(subtask.id)
           ? {
               ...subtask,
               isCompleted: true,
