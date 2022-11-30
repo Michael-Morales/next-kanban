@@ -20,11 +20,12 @@ export function Signup() {
       confirmPassword: "",
     },
     resolver: zodResolver(signupSchema),
+    reValidateMode: "onBlur",
   });
   const { signupMutation } = useAuth(() => router.push("/"));
 
-  const onSubmit: SubmitHandler<ISignup> = (values) => {
-    const parsedValues = signupSchema.parse(values);
+  const onSubmit: SubmitHandler<ISignup> = async (values) => {
+    const parsedValues = await signupSchema.parseAsync(values);
     signupMutation.mutate(parsedValues);
   };
 

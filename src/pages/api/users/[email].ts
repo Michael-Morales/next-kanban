@@ -1,13 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { hash } from "argon2";
 
 import prisma from "@lib/prismadb";
-import { signupSchema } from "@lib/validation";
 
-async function createUser(email: string, password: string) {
-  await prisma.user.create({
-    data: { email, password },
-  });
+async function checkUserEmail(email: string) {
+  const user = await prisma.user.findUnique({ where: { email } });
+  return !!user;
 }
 
 export default async function handler(
@@ -16,11 +13,10 @@ export default async function handler(
 ) {
   try {
     switch (req.method) {
-      case "POST":
-        const { email, password } = await signupSchema.parseAsync(req.body);
-        const hashedPassword = await hash(password);
-        await createUser(email, hashedPassword);
-        return res.status(201).json({ success: true });
+      case "GET":
+        const { email } = req.query;
+        const userExists = await checkUserEmail(email as string);
+        return res.status(200).json({ exists: userExists });
 
       default:
         return res
