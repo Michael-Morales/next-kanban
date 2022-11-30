@@ -30,7 +30,7 @@ export default function App({
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>
         <Hydrate state={pageProps.dehydratedState}>
-          <div className={`${plusJakartaSans.variable} font-sans`}>
+          <div className={`${plusJakartaSans.variable} h-full font-sans`}>
             <NextNProgress color="#635fc7" options={{ showSpinner: false }} />
             <Component {...pageProps} />
             <div id="modal" />
