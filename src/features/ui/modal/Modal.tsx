@@ -1,4 +1,4 @@
-import type { Task, Subtask } from "@prisma/client";
+import type { Task } from "@prisma/client";
 import {
   useState,
   useEffect,

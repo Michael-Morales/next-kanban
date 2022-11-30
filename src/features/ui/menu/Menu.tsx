@@ -5,13 +5,13 @@ import {
   useImperativeHandle,
   MouseEvent,
   useRef,
-  useEffect,
 } from "react";
 import { useRouter } from "next/router";
 import { signOut } from "next-auth/react";
 
 import { Modal, IModalHandle, DeleteModal, Button } from "@features/ui";
 import { EditTask, EditBoard, useBoard, useTask } from "@features/dashboard";
+import { useRouteChange } from "@hooks/useRouteChange";
 
 interface IProps {
   task?: Task;
@@ -73,13 +73,7 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
     deleteModalRef.current?.close();
   };
 
-  useEffect(() => {
-    router.events.on("routeChangeComplete", handleCloseDeleteModal);
-
-    return () => {
-      router.events.off("routeChangeComplete", handleCloseDeleteModal);
-    };
-  }, [router]);
+  useRouteChange(handleCloseDeleteModal);
 
   return (
     <>

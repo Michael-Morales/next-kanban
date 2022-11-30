@@ -1,10 +1,4 @@
-import {
-  useState,
-  useImperativeHandle,
-  forwardRef,
-  useEffect,
-  useRef,
-} from "react";
+import { useState, useImperativeHandle, forwardRef, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -19,6 +13,7 @@ import {
   ChevronIcon,
 } from "@features/ui";
 import { useBoard } from "@features/dashboard";
+import { useRouteChange } from "@hooks/useRouteChange";
 
 export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
   _,
@@ -55,13 +50,7 @@ export const Header = forwardRef<{ closeMenu: () => void }, {}>(function Header(
     []
   );
 
-  useEffect(() => {
-    router.events.on("routeChangeComplete", handleCloseNav);
-
-    return () => {
-      router.events.off("routeChangeComplete", handleCloseNav);
-    };
-  }, [router]);
+  useRouteChange(handleCloseNav);
 
   return (
     <>
