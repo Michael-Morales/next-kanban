@@ -20,7 +20,27 @@ export function useSubtasks(id: string) {
 
   const toggleMutation = useMutation({
     mutationFn: (values: IToggleSubtask) => axios.patch("/subtasks", values),
-    onSuccess: () => {
+    onMutate: async ({ taskId, subtasks }) => {
+      await queryClient.cancelQueries({ queryKey: ["subtasks", taskId] });
+      const previousSubtasks = queryClient.getQueryData<Subtask[]>([
+        "subtasks",
+        taskId,
+      ]);
+      const updatedSubtasks = previousSubtasks?.map((subtask) =>
+        subtasks.includes(subtask.id)
+          ? {
+              ...subtask,
+              isCompleted: true,
+            }
+          : { ...subtask, isCompleted: false }
+      );
+      queryClient.setQueryData(["subtasks", taskId], updatedSubtasks);
+      return { previousSubtasks };
+    },
+    onError: (_, { taskId }, context) => {
+      queryClient.setQueryData(["subtasks", taskId], context?.previousSubtasks);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries(["subtasks", id]);
     },
   });

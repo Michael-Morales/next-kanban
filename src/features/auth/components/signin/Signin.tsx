@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -9,6 +10,7 @@ import { ISignin, signinSchema } from "@lib/validation";
 
 export function Signin() {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -23,6 +25,7 @@ export function Signin() {
   });
 
   const onSubmit: SubmitHandler<ISignin> = (values) => {
+    setIsLoading(true);
     const { email, password } = signinSchema.parse(values);
     signIn("app-signin", {
       email,
@@ -33,12 +36,13 @@ export function Signin() {
         router.push("/dashboard");
       } else {
         setError("email", { type: "login", message: "Wrong credentials" });
+        setIsLoading(false);
       }
     });
   };
 
   const checkErrors = () => {
-    return !!errors.email || !!errors.password || !isDirty;
+    return !!errors.email || !!errors.password || !isDirty || isLoading;
   };
 
   return (
@@ -62,7 +66,7 @@ export function Signin() {
           register={register("password", { required: true })}
           error={errors.password?.message}
         />
-        <Button type="submit" disabled={checkErrors()}>
+        <Button type="submit" disabled={checkErrors()} loading={isLoading}>
           sign in
         </Button>
       </form>

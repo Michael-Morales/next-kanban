@@ -22,10 +22,13 @@ export function Layout({ children }: IProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Header ref={headerRef} />
-      <div className="flex" onClick={() => headerRef.current?.closeMenu()}>
+      <div
+        className="flex h-[calc(100%-60px)] md:h-[calc(100%-64px)]"
+        onClick={() => headerRef.current?.closeMenu()}
+      >
         <DesktopNav isOpen={isOpen} onClose={() => setIsOpen(false)} />
         <main
-          className={`relative h-[calc(100vh-60px)] w-full overflow-auto transition-all md:h-[calc(100vh-64px)] ${
+          className={`relative h-full w-full overflow-auto transition-all ${
             isOpen ? "ml-72" : "ml-0"
           }`}
         >

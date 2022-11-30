@@ -68,7 +68,11 @@ export function Signup() {
           })}
           error={errors.confirmPassword?.message}
         />
-        <Button type="submit" disabled={checkErrors()}>
+        <Button
+          type="submit"
+          disabled={checkErrors()}
+          loading={signupMutation.isLoading}
+        >
           sign up
         </Button>
       </form>
