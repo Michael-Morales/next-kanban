@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -16,6 +16,7 @@ export function Signin() {
     handleSubmit,
     formState: { errors, isDirty },
     setError,
+    setFocus,
   } = useForm<ISignin>({
     defaultValues: {
       email: "",
@@ -44,6 +45,10 @@ export function Signin() {
   const checkErrors = () => {
     return !!errors.email || !!errors.password || !isDirty || isLoading;
   };
+
+  useEffect(() => {
+    setFocus("email");
+  }, [setFocus]);
 
   return (
     <div className="w-full max-w-md rounded-lg bg-white px-4 py-6 shadow-lg shadow-shadow dark:bg-theme-dark">

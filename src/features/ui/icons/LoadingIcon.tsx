@@ -1,8 +1,15 @@
-export function LoadingIcon() {
+interface IProps {
+  size: "standard" | "small";
+}
+
+export function LoadingIcon({ size }: IProps) {
   return (
     <svg
-      className="h-6 w-6 text-white motion-safe:animate-spin"
+      className={`${
+        size === "standard" ? "h-6 w-6" : "h-5 w-5"
+      } text-white motion-safe:animate-spin`}
       xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
     >
       <circle
         className="opacity-25"

@@ -5,7 +5,7 @@ import { LoadingIcon } from "@features/ui";
 interface IProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: string | JSX.Element;
   buttonStyle?: string;
-  size?: string;
+  size?: "standard" | "small";
   loading?: boolean;
 }
 
@@ -37,7 +37,7 @@ export function Button({
       disabled={disabled}
       onClick={onClick}
     >
-      {loading ? <LoadingIcon /> : children}
+      {loading ? <LoadingIcon size={size} /> : children}
     </button>
   );
 }
