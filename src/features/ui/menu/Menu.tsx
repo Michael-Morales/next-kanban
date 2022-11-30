@@ -30,6 +30,7 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
   ref
 ) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const editModalRef = useRef<IModalHandle>(null);
   const deleteModalRef = useRef<IModalHandle>(null);
   const router = useRouter();
@@ -69,6 +70,11 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
     [isOpen]
   );
 
+  const handleSignout = () => {
+    setIsLoading(true);
+    signOut({ callbackUrl: "/" });
+  };
+
   const handleCloseDeleteModal = () => {
     deleteModalRef.current?.close();
   };
@@ -103,7 +109,8 @@ export const Menu = forwardRef<IMenuHandle, IProps>(function Menu(
           <Button
             buttonStyle="danger"
             size="small"
-            onClick={() => signOut({ callbackUrl: "/" })}
+            onClick={handleSignout}
+            loading={isLoading}
           >
             sign out
           </Button>
