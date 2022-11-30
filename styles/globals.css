@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+  html,
+  body,
+  #__next {
+    @apply h-full;
+  }
+
   body {
     @apply bg-light text-body transition-colors dark:bg-dark;
   }
