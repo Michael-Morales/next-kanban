@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import Head from "next/head";
+import ScrollContainer from "react-indiana-drag-scroll";
 
 import { Header, DesktopNav, ShowSidebarIcon } from "@features/ui";
 
@@ -27,13 +28,15 @@ export function Layout({ children }: IProps) {
         onClick={() => headerRef.current?.closeMenu()}
       >
         <DesktopNav isOpen={isOpen} onClose={() => setIsOpen(false)} />
-        <main
+        <ScrollContainer
           className={`relative h-full w-full overflow-auto transition-all ${
             isOpen ? "ml-72" : "ml-0"
           }`}
+          component="main"
+          ignoreElements=".card"
         >
           {children}
-        </main>
+        </ScrollContainer>
         <button
           className="fixed bottom-8 z-10 hidden rounded-tr-full rounded-br-full bg-primary p-4 hover:bg-hover-primary md:block"
           onClick={() => setIsOpen(true)}
