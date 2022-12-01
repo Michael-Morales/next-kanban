@@ -29,7 +29,7 @@ export default function Board() {
   return (
     <Layout>
       <DragDropContext onDragEnd={onDrop}>
-        <div className="flex h-full gap-x-6 px-4 py-6 md:px-6">
+        <div className="flex min-h-full gap-x-6 px-4 py-6 md:px-6">
           {columns?.map((column) => (
             <Column key={column.id} column={column} />
           ))}
