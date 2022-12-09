@@ -1,12 +1,27 @@
 import type { GetServerSidePropsContext } from "next";
-import type { DropResult } from "react-beautiful-dnd";
+import type {
+  DragEndEvent,
+  DragStartEvent,
+  DragOverEvent,
+} from "@dnd-kit/core";
+import type { Task } from "@prisma/client";
+import { useState } from "react";
 import { QueryClient, dehydrate } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { DragDropContext } from "react-beautiful-dnd";
 import { unstable_getServerSession } from "next-auth";
+import {
+  DndContext,
+  closestCorners,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  KeyboardSensor,
+  DragOverlay,
+} from "@dnd-kit/core";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 
 import { Layout } from "@features/ui";
-import { Column, NewColumn } from "@features/dashboard";
+import { Column, NewColumn, Card } from "@features/dashboard";
 import { getBoards } from "@api/boards";
 import { getBoardById } from "@api/boards/[id]";
 import { getColumnsByBoardId } from "@api/columns";
@@ -21,21 +36,46 @@ export default function Board() {
     query: { data: columns },
   } = useColumns(router.query.id as string);
   const { moveMutation } = useTasks();
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      // activationConstraint: { delay: 50, distance: 0, tolerance: 5 },
+    }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+  const [activeCard, setActiveCard] = useState<Task | null>(null);
 
-  const onDrop = (result: DropResult) => {
-    moveMutation.mutate(result);
+  const handleDragStart = ({ active }: DragStartEvent) => {
+    setActiveCard(active.data.current?.task);
+  };
+
+  const handleDragOver = (res: DragOverEvent) => {
+    console.log(res);
+  };
+
+  const handleDragEnd = (result: DragEndEvent) => {
+    // console.log(result);
+    setActiveCard(null);
   };
 
   return (
     <Layout>
-      <DragDropContext onDragEnd={onDrop}>
-        <div className="flex min-h-full gap-x-6 px-4 py-6 md:px-6">
+      <div className="flex min-h-full gap-x-6 px-4 py-6 md:px-6">
+        <DndContext
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          onDragOver={handleDragOver}
+          collisionDetection={closestCorners}
+          sensors={sensors}
+        >
           {columns?.map((column) => (
             <Column key={column.id} column={column} />
           ))}
-          <NewColumn />
-        </div>
-      </DragDropContext>
+          <DragOverlay>
+            {activeCard ? <Card task={activeCard} /> : null}
+          </DragOverlay>
+        </DndContext>
+        <NewColumn />
+      </div>
     </Layout>
   );
 }

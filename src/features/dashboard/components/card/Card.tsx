@@ -1,16 +1,15 @@
 import type { Task } from "@prisma/client";
 import { useRef } from "react";
-import { Draggable } from "react-beautiful-dnd";
+import { useSortable } from "@dnd-kit/sortable";
 
 import { TaskView, useSubtasks } from "@features/dashboard";
 import { Modal, IModalHandle } from "@features/ui";
 
 interface IProps {
   task: Task;
-  idx: number;
 }
 
-export function Card({ task, idx }: IProps) {
+export function Card({ task }: IProps) {
   const { id, title, description } = task;
   const {
     query: { data: subtasks },
@@ -19,29 +18,40 @@ export function Card({ task, idx }: IProps) {
     ?.filter(({ isCompleted }) => isCompleted)
     .map(({ id }) => id);
   const modalRef = useRef<IModalHandle>(null);
+  const { setNodeRef, listeners, transform, transition, isDragging } =
+    useSortable({
+      id,
+      data: {
+        task,
+      },
+    });
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        transition,
+      }
+    : undefined;
 
   return (
     <>
-      <Draggable draggableId={id} index={idx}>
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            className="card group cursor-pointer rounded-lg bg-white px-4 py-6 shadow-lg shadow-shadow transition-colors dark:bg-theme-dark"
-            onClick={() => modalRef.current?.open()}
-          >
-            <h3 className="mb-2 font-bold text-black transition-colors group-hover:text-primary dark:text-white">
-              {title}
-            </h3>
-            <p className="text-xs font-bold">
-              {!!subtasks?.length
-                ? `${completedSubtasks?.length} of ${subtasks.length} subtasks`
-                : "No subtask"}
-            </p>
-          </div>
-        )}
-      </Draggable>
+      <div
+        ref={setNodeRef}
+        {...listeners}
+        className={`card group cursor-pointer rounded-lg bg-white px-4 py-6 shadow-lg shadow-shadow transition-colors dark:bg-theme-dark ${
+          isDragging ? "invisible" : ""
+        }`}
+        onClick={() => modalRef.current?.open()}
+        style={style}
+      >
+        <h3 className="mb-2 font-bold text-black transition-colors group-hover:text-primary dark:text-white">
+          {title}
+        </h3>
+        <p className="text-xs font-bold">
+          {!!subtasks?.length
+            ? `${completedSubtasks?.length} of ${subtasks.length} subtasks`
+            : "No subtask"}
+        </p>
+      </div>
       <Modal ref={modalRef} title={title} task={task}>
         <TaskView
           taskId={task.id}
