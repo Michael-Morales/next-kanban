@@ -14,7 +14,8 @@ import {
   closestCorners,
   useSensor,
   useSensors,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   KeyboardSensor,
   DragOverlay,
 } from "@dnd-kit/core";
@@ -37,8 +38,11 @@ export default function Board() {
   } = useColumns(router.query.id as string);
   const { moveMutation } = useTasks();
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      // activationConstraint: { delay: 50, distance: 0, tolerance: 5 },
+    useSensor(MouseSensor, {
+      activationConstraint: { distance: 10 },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 100, tolerance: 5 },
     }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );

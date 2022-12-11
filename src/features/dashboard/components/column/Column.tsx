@@ -20,7 +20,6 @@ export function Column({ column }: IProps) {
   const { setNodeRef } = useDroppable({
     id,
   });
-
   const taskIds = tasks?.map(({ id }) => id);
 
   return (
